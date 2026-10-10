@@ -1,0 +1,20 @@
+.mobile-navigation-overlay { position:fixed; inset:0; z-index:40; background:#0009; backdrop-filter:blur(3px); }
+.mobile-panel.mobile-navigation-panel { width:min(92vw,400px); height:100dvh; padding:26px 24px; background:#171510; display:flex; flex-direction:column; border-left:1px solid #b89a6138; }
+.mobile-navigation-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.mobile-navigation-logo { width:auto; height:43px; }
+.mobile-navigation-close { display:grid; place-items:center; width:38px; height:38px; border:1px solid #b89a6138; color:#ddd1ba; }
+.mobile-navigation-caption { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:#a99978; margin-top:22px; padding-bottom:22px; border-bottom:1px solid #b89a6130; }
+.mobile-navigation-panel .mobile-links { margin-top:10px; }
+.mobile-navigation-panel .mobile-nav-row { border-color:#ffffff0c; }
+.mobile-navigation-panel .mobile-nav-row > a { font-family:Georgia,serif; font-size:21px; padding-block:15px; justify-content:space-between; }
+.mobile-navigation-panel .mobile-nav-row > a > svg { width:13px; height:13px; color:#9b8761; margin-right:15px; }
+.mobile-navigation-panel .mobile-submenu-toggle { padding:16px; min-width:44px; min-height:44px; }
+.mobile-navigation-panel .navbar-mobile-submenu.navbar-mobile-submenu { margin:0 0 12px 0; padding:2px 0 2px 12px; }
+.mobile-navigation-panel .navbar-mobile-submenu a { font-size:12px; padding:12px; color:#bfb5a3; }
+.mobile-navigation-panel .mobile-nav-row > a[aria-current] { color:#e8cf97; }
+.mobile-navigation-footer { margin-top:auto; padding-top:32px; }
+.mobile-navigation-footer p { font-family:Georgia,serif; font-size:17px; font-style:italic; color:#bfb5a3; }
+.mobile-navigation-footer a { display:flex; align-items:center; justify-content:center; gap:12px; padding:14px; margin-top:18px; border:1px solid #b89a6150; font-size:12px; color:#e8cf97; }
+.mobile-navigation-footer a svg { width:14px; height:14px; }
+.mobile-navigation-footer span { display:block; font-size:8px; color:#817765; letter-spacing:.08em; text-align:center; margin-top:20px; }
+@media(max-height:700px) { .mobile-panel.mobile-navigation-panel { padding-top:20px; } .mobile-navigation-panel .mobile-nav-row > a { padding-block:12px; } .mobile-navigation-footer { padding-top:22px; } }
