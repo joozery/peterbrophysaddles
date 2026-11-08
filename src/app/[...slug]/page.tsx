@@ -8,12 +8,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/home/site-header";
 import { SiteFooter } from "@/components/home/site-footer";
-import { Heritage } from "@/components/home/heritage";
+import { AboutPageContent } from "@/components/about/about-page";
 import { SaddleCollection } from "@/components/home/saddle-collection";
 import { CustomSaddles } from "@/components/home/custom-saddles";
 import { Testimonials } from "@/components/home/testimonials";
 import { Contact } from "@/components/home/contact";
 import { ButtonLink } from "@/components/ui/button-link";
+import { getHomeContent } from "@/lib/server/home-content";
+import { getContentPages } from "@/lib/server/page-content";
+import { getAboutContent } from "@/lib/server/about-content";
+import { getPricingContent } from "@/lib/server/pricing-content";
+import { PricingPageContent } from "@/components/pricing/pricing-page";
 
 const pages: Record<string, { title: string; description: string; image?: string }> = {
   "about": { title: "About Peter Brophy", description: "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider." },
@@ -35,9 +40,19 @@ saddleTypes.forEach(([image, label], index) => {
 
 type Props = { params: Promise<{ slug: string[] }> };
 export function generateStaticParams() { return Object.keys(pages).map(path => ({ slug: path.split("/") })); }
+/** Built-in page info, overridden by what's saved in Admin → Pages & content. Unpublished pages return null. */
+async function resolvePage(path: string) {
+  const base = pages[path];
+  if (!base) return null;
+  const saved = (await getContentPages())[path];
+  if (!saved) return base;
+  if (!saved.published) return null;
+  return { ...base, title: saved.title || base.title, description: saved.description || base.description, image: saved.image || base.image };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = pages[slug.join("/")];
+  const page = await resolvePage(slug.join("/"));
   return page ? { title: `${page.title} | Peter Brophy Saddles`, description: page.description } : {};
 }
 function PagePlaceholder() {
@@ -51,17 +66,20 @@ export default function ContentPage({ params }: Props) {
 async function PageContent({ params }: Props) {
   const { slug } = await params;
   const path = slug.join("/");
-  const page = pages[path];
+  const page = await resolvePage(path);
   if (!page) notFound();
   if (path === "contact") return <ContactPageContent />;
+  if (path === "about") return <AboutPageContent content={await getAboutContent()} />;
+  if (path === "saddle-pricing") return <PricingPageContent content={await getPricingContent()} />;
   if (path.startsWith("saddle-range/")) {
     const product = products.find(product => product.id === slug[1]);
     if (!product) notFound();
     return <SaddleDetail product={product} />;
   }
+  const home = await getHomeContent();
   return <>
     <section className="section-shell py-12 sm:py-16"><nav aria-label="Breadcrumb" className="mb-7 flex flex-wrap gap-3 text-xs text-stone-500"><Link href="/">Home</Link><span aria-hidden="true">/</span>{path.startsWith("saddle-range/") && <><Link href="/saddle-range">Saddle Range</Link><span aria-hidden="true">/</span></>}<span aria-current="page">{page.title}</span></nav><p className="eyebrow">Peter Brophy Saddles</p><h1 className="mt-4">{page.title}</h1><p className="body-copy mt-5 max-w-2xl">{page.description}</p></section>
-    {path === "about" ? <Heritage /> : path === "saddle-range" ? <SaddleCollection /> : path === "custom-saddles" ? <CustomSaddles /> : path === "testimonials" ? <Testimonials /> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" /></div><div><h2>Made with purpose</h2><p className="body-copy my-6">Start a conversation about your horse, your riding and the details that matter to you.</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : "/contact"}>{path.startsWith("saddle-range/") ? "View product" : "Enquire now"}</ButtonLink></div></section> : null}
-    <Contact />
+    {path === "saddle-range" ? <SaddleCollection content={home.collection} /> : path === "custom-saddles" ? <CustomSaddles content={home.custom} /> : path === "testimonials" ? <Testimonials content={home.testimonial} /> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" unoptimized={page.image.startsWith("https://")} /></div><div><h2>Made with purpose</h2><p className="body-copy my-6">Start a conversation about your horse, your riding and the details that matter to you.</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : "/contact"}>{path.startsWith("saddle-range/") ? "View product" : "Enquire now"}</ButtonLink></div></section> : null}
+    <Contact content={home.contact} />
   </>;
 }

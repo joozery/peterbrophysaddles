@@ -43,6 +43,7 @@ export function ContactPageContent() {
           <label>Your message <span>*</span><textarea name="message" required rows={5} placeholder="Tell us about your horse, your riding and the saddle you have in mind…" /></label>
           <div className="contact-form-bottom"><button type="submit" className="button-link button-gold">{copied ? "Enquiry copied" : "Copy enquiry"}{copied ? <CheckIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />}</button><p>Prepare and copy your message.<br />This form does not send an enquiry.</p></div>
           <p className="contact-form-status" role="status">{status}</p>
+          <p className="form-privacy-note">We use your details only to reply to your enquiry. See our <Link href="/privacy">Privacy Policy</Link>.</p>
           {preview && <label>Your prepared enquiry<textarea readOnly value={preview} rows={7} onFocus={event => event.target.select()} /></label>}
         </form>
       </div>

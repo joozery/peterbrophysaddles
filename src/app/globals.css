@@ -179,3 +179,9 @@ button:disabled { cursor: not-allowed; opacity: .45; transform: none !important;
 .mobile-submenu { margin-left: 26px; padding: 4px 0 10px 12px; border-left: 1px solid #b89a6130; }
 .mobile-submenu a { border: 0; padding: 12px; border-radius: 3px; line-height: 1.4; }
 .mobile-submenu a:hover, .mobile-submenu a[aria-current="page"] { color: #e8cf97; background: #b89a6112; }
+
+/* Footer legal row */
+.footer-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding-block: 16px 22px; border-top: 1px solid #ffffff14; color: #f0ece28c; font-size: 11px; }
+.footer-legal a:hover { color: #b89a61; }
+.form-privacy-note { font-size: 11px; color: #7a705f; }
+.form-privacy-note a { text-decoration: underline; text-underline-offset: 3px; }

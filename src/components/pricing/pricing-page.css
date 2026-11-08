@@ -1,0 +1,33 @@
+/* Saddle Pricing — matches the About page look (ink / gold / cream) */
+.pricing-page { background: #f2efe7; color: #211e18; }
+.pricing-intro { padding-block: 28px 40px; }
+.pricing-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 44px; color: #8a7d64; font-size: 11px; }
+.pricing-breadcrumb svg { width: 12px; height: 12px; }
+.pricing-breadcrumb a:hover { color: #211e18; }
+.pricing-intro h1 { margin-top: 17px; font-size: clamp(38px, 4.7vw, 68px); }
+.pricing-intro h1 em, .pricing-social h2 em { color: #9b7e4a; font-weight: 400; text-transform: none; }
+
+.pricing-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: center; padding-bottom: 72px; }
+.pricing-photo { position: relative; min-height: 460px; margin: 0; overflow: hidden; background: #2a2219; }
+.pricing-photo img { object-fit: cover; }
+.pricing-photo figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 22px 18px; background: linear-gradient(transparent, #0d0c09cc); color: #f0e3c4; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+.pricing-copy { display: grid; justify-items: start; gap: 22px; max-width: 540px; }
+.pricing-rule { width: 64px; height: 1px; background: #b89a61; }
+.pricing-copy p { color: #514b40; font-size: 15px; line-height: 1.75; }
+.pricing-copy .pricing-lead { color: #2c2720; font-family: "Times New Roman", Georgia, serif; font-size: clamp(20px, 1.9vw, 26px); line-height: 1.5; }
+
+.pricing-social { background: #15130f; color: #f0ece2; }
+.pricing-socialInner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 28px; padding-block: 44px; }
+.pricing-fbMark { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid #b89a6170; border-radius: 50%; color: #e8cf97; font-family: Arial, Helvetica, sans-serif; font-size: 28px; font-weight: 700; }
+.pricing-social h2 { font-size: clamp(26px, 2.6vw, 38px); }
+.pricing-social p { margin-top: 8px; color: #cfc6b4; font-size: 14px; }
+.pricing-fbButton { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 13px 24px; border: 1px solid #b59b68; border-radius: 4px; background: linear-gradient(135deg, #d3bd87, #ac8b54); color: #292217; font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.pricing-fbButton:hover { background: #dcc99c; }
+
+@media (max-width: 860px) {
+  .pricing-main { grid-template-columns: 1fr; padding-bottom: 48px; }
+  .pricing-photo { min-height: 320px; }
+  .pricing-socialInner { grid-template-columns: auto 1fr; }
+  .pricing-fbButton { grid-column: 1 / -1; justify-self: start; }
+}
+@media (max-width: 480px) { .pricing-breadcrumb { margin-bottom: 28px; } .pricing-intro h1 { font-size: 36px; } .pricing-photo { min-height: 260px; } }
