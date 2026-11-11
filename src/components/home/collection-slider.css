@@ -1,0 +1,11 @@
+.collection-slider .collection-slider-track { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc((100% - 20px) / 5); gap: 5px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 12px; }
+.collection-slider-track::-webkit-scrollbar { display: none; }
+.collection-slider-track .saddle-card { scroll-snap-align: start; scroll-margin: 0; }
+.collection-slider-track .saddle-card:last-child { grid-column: auto; }
+.collection-slider-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px; }
+.collection-slider-controls button { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #8b7353; color: inherit; background: transparent; cursor: pointer; border-radius: 50%; }
+.collection-slider-controls button:disabled { opacity: .3; cursor: default; }
+.collection-slider-controls button:not(:disabled):hover { background: #8b735325; }
+.collection-slider-controls button:focus-visible, .collection-slider-track:focus-visible { outline: 2px solid #8b7353; outline-offset: 3px; }
+@media (max-width: 950px) { .collection-slider .collection-slider-track { grid-auto-columns: calc((100% - 10px) / 3); } }
+@media (max-width: 640px) { .collection-slider .collection-slider-track { grid-auto-columns: 78%; gap: 8px; } }

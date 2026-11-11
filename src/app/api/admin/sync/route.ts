@@ -7,6 +7,7 @@ import { PAGES_TAG } from "@/lib/server/page-content";
 import { ABOUT_TAG } from "@/lib/server/about-content";
 import { PRICING_TAG } from "@/lib/server/pricing-content";
 import { TESTIMONIALS_TAG } from "@/lib/server/testimonials-content";
+import { PRODUCTS_TAG } from "@/lib/server/product-content";
 
 // Applies a batch of create/update/delete changes from the admin UI, checked against the user's role.
 export async function POST(request: Request) {
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
     if (ops.some(op => op?.singleton === "about")) revalidateTag(ABOUT_TAG, { expire: 0 });
     if (ops.some(op => op?.singleton === "pricing")) revalidateTag(PRICING_TAG, { expire: 0 });
     if (ops.some(op => op?.singleton === "testimonials")) revalidateTag(TESTIMONIALS_TAG, { expire: 0 });
+    if (ops.some(op => op?.list === "products")) revalidateTag(PRODUCTS_TAG, { expire: 0 });
     return NextResponse.json({ ok: true });
   } catch (err) { console.error("sync", err); return fail(503, "Could not save to the database."); }
 }

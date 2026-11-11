@@ -1,0 +1,4 @@
+Generated with the built-in image_gen tool.
+Reference: public/logo/browser.png
+
+Create a production browser favicon for Peter Brophy Saddles. Use case logo-brand. Use the referenced existing company logo only as brand style reference, not a literal full wordmark. A single square icon with a deep dark chocolate brown background (#211810), a restrained warm antique gold border with gently rounded corners, and a large centered ivory/antique gold PB monogram. Exact text: PB. Bold clear elegant traditional serif letterforms, easy to distinguish at 16 and 32 pixels, minimal generous strokes. The two letters occupy most of the square with about 12% padding. Flat clean graphic, subtly evokes traditional Australian leather saddlery with no actual leather texture, no tiny text, no other words, no mockup, no scene, no gradients, no shadows, no watermark. Straight-on full square asset.

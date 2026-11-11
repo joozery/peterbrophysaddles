@@ -7,6 +7,9 @@ import { type ContentPage, today, updateAdmin, useAdmin } from "@/lib/admin-stor
 import { Badge, Card, Field, FormDrawer, PageHeader, SearchBox, str, useToast } from "./admin-ui";
 import { formatDate } from "./sample-data";
 import { ImageUpload, isImageSrc } from "./image-upload";
+import { PageSectionFields } from "./page-section-fields";
+import { pageContentDefaults } from "@/lib/page-content-defaults";
+import { validatePageContent } from "@/lib/validate-page-content";
 
 export function PagesView() {
   const { pages } = useAdmin();
@@ -18,7 +21,7 @@ export function PagesView() {
   const rows = pages.filter(p => !q || `${p.title} ${p.slug}`.toLowerCase().includes(q));
 
   return <>
-    <PageHeader eyebrow="Website" title="Pages & content" description="Edit page titles, introductions and header images." />
+    <PageHeader eyebrow="Website" title="Pages & content" description="Edit page titles, introductions, images and section content." />
     <p className="admin-notice">Changes go live as soon as you save. Switching a page to <strong>Draft</strong> hides it from the website (it shows “page not found”). Home page sections are edited under <strong>Home page</strong>.</p>
     <Card flush>
       <div className="admin-toolbar"><p className="admin-muted">{pages.length} pages</p><SearchBox value={query} onChange={setQuery} label="Search pages" /></div>
@@ -42,7 +45,11 @@ export function PagesView() {
         if (!title) return "Title is required.";
         if (description.length > 400) return "Keep the introduction under 400 characters.";
         if (image && !isImageSrc(image)) return "Image must be uploaded, or a path starting with / or https://.";
-        updateAdmin(s => ({ ...s, pages: s.pages.map(p => p.slug === editing.slug ? { ...p, title, description, image, published: data.get("published") === "on", updatedAt: today() } : p) }));
+        const defaults = pageContentDefaults[editing.slug];
+        const content = defaults ? Object.fromEntries(Object.keys(defaults).map(key => [key, String(data.get(`content.${key}`) ?? editing.content?.[key] ?? defaults[key])])) : editing.content;
+        const problem = validatePageContent(editing.slug, content);
+        if (problem) return problem;
+        updateAdmin(s => ({ ...s, pages: s.pages.map(p => p.slug === editing.slug ? { ...p, title, description, image, content, published: data.get("published") === "on", updatedAt: today() } : p) }));
         notify(`${title} saved. Changes are live.`);
       }}>
       {editing && <div className="admin-form">
@@ -50,6 +57,7 @@ export function PagesView() {
         <Field label="Introduction" hint="Shown under the title and used as the Google description. Max 400 characters."><textarea name="description" className="admin-input" rows={5} maxLength={400} defaultValue={editing.description} /></Field>
         <ImageUpload label="Header image (optional)" name="image" folder="pages" defaultValue={editing.image} onBusyChange={setUploading} />
         <label className="admin-check"><input type="checkbox" name="published" defaultChecked={editing.published} />Published</label>
+        <PageSectionFields slug={editing.slug} content={editing.content} onBusyChange={setUploading} />
       </div>}
     </FormDrawer>
     {toast}

@@ -180,6 +180,12 @@
 .admin-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .admin-form-error { margin: 0 24px 4px; padding: 10px 12px; border-radius: 6px; background: #f6e1df; color: #9a3329; font-size: 13px; }
 .admin-foot-start { margin-right: auto; display: flex; align-items: center; }
+.admin-specs { display: grid; gap: 8px; min-width: 0; border: 0; padding: 0; margin: 0; }
+.admin-specs > .admin-button { justify-self: start; }
+.admin-gallery-row { display: grid; grid-template-columns: minmax(0, 1fr) 38px; gap: 8px; align-items: start; }
+.admin-gallery-row > .admin-icon-button { margin-top: 22px; }
+.admin-spec-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 38px; gap: 8px; align-items: center; }
+@media (max-width: 480px) { .admin-spec-row { grid-template-columns: minmax(0, 1fr) 38px; } .admin-spec-row > input:nth-child(2) { grid-row: 2; } }
 .admin-hint { display: block; margin-top: 6px; color: var(--a-muted); font-size: 11px; font-weight: 400; }
 .admin-hint.is-warn { color: #a5641c; font-weight: 600; }
 .admin-check { display: flex; align-items: center; gap: 10px; font-size: 13px; cursor: pointer; }
@@ -523,3 +529,5 @@ button.admin-user:hover, button.admin-user[data-state="open"] { background: #ebe
 .admin-convert-quotes { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
 .admin-convert-quote { display: inline-flex; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid var(--a-line); border-radius: 6px; background: #fff; color: inherit; }
 .admin-convert-quote:hover { border-color: #b89a61; }
+.admin-page-field-group { border-top: 1px solid #b7a88c66; margin-top: 20px; padding-top: 16px; }
+.admin-page-field-group > summary { cursor: pointer; font-weight: 600; font-size: 14px; margin-bottom: 18px; }

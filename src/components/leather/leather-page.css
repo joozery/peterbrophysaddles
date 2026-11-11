@@ -1,0 +1,46 @@
+.leather-page { --leather-line: #b7a88c66; }
+.leather-intro { padding-top: 28px; }
+.leather-breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 11px; color: #716858; }
+.leather-breadcrumb svg { width: 12px; }
+.leather-heading { display: grid; grid-template-columns: 1.25fr 1fr; gap: 70px; align-items: end; padding-block: 45px 36px; }
+.leather-heading h1 { margin-top: 18px; }
+.leather-heading h1 span { display: block; color: #8c7045; font-size: .54em; font-style: italic; text-transform: none; letter-spacing: -.02em; margin-top: 12px; }
+.leather-page p:not(.eyebrow) { font-size: 14px; line-height: 1.8; color: #625a4d; }
+.leather-intro-copy { max-width: 430px; padding-bottom: 5px; }
+.leather-intro-copy a { display: inline-flex; align-items: center; gap: 18px; margin-top: 20px; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 600; }
+.leather-hero { position: relative; height: clamp(280px, 38vw, 510px); overflow: hidden; background: #35291e; }
+.leather-hero img { object-position: center 55%; }
+.leather-hero figcaption { position: absolute; inset: auto 0 0; display: flex; justify-content: space-between; gap: 16px; padding: 45px 28px 22px; color: #f0ece2; background: linear-gradient(transparent, #15130fc9); text-transform: uppercase; letter-spacing: .16em; font-size: 10px; }
+.leather-details { padding-block: 76px; }
+.leather-section-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: end; }
+.leather-page h2 { margin-top: 14px; }
+.leather-page h2 em { color: #8c7045; text-transform: none; }
+.leather-section-heading > p { max-width: 460px; }
+.leather-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 38px; }
+.leather-detail-grid article { border-top: 1px solid var(--leather-line); padding-top: 22px; }
+.leather-number { font-family: Georgia, serif; font-size: 16px; color: #927547; }
+.leather-page h3 { font-family: Georgia, serif; font-weight: 400; font-size: 24px; margin-block: 18px 10px; }
+.leather-materials { background: #e7e0d3; padding-block: 60px; }
+.leather-material-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9%; align-items: center; }
+.leather-material-photo { position: relative; min-height: 410px; }
+.leather-material-copy > p:not(.eyebrow) { margin-block: 24px; max-width: 440px; }
+.leather-material-copy ul { margin-bottom: 28px; }
+.leather-material-copy li { padding-block: 12px; border-bottom: 1px solid var(--leather-line); font-size: 12px; }
+.leather-process { display: grid; grid-template-columns: 1fr 1fr; gap: 9%; padding-block: 80px; }
+.leather-process > div > p:not(.eyebrow) { margin-block: 22px; }
+.leather-process ol { list-style: none; }
+.leather-process li { display: flex; gap: 24px; padding-block: 24px; border-top: 1px solid var(--leather-line); }
+.leather-process li h3 { margin-top: 0; }
+.leather-faq { display: grid; grid-template-columns: 1fr 1.2fr; gap: 7%; padding-block: 0 80px; }
+.leather-faq details { border-bottom: 1px solid var(--leather-line); }
+.leather-faq summary { display: flex; justify-content: space-between; gap: 20px; cursor: pointer; list-style: none; font-size: 14px; padding-block: 22px; }
+.leather-faq summary::-webkit-details-marker { display: none; }
+.leather-faq summary span { color: #927547; font-size: 20px; }
+.leather-faq details[open] summary span { transform: rotate(45deg); }
+.leather-faq details p { padding: 0 25px 22px 0; }
+.leather-cta { padding-block: 50px; background: #211d16; color: #f0ece2; }
+.leather-cta > div { display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.leather-cta p:not(.eyebrow) { color: #c9c0b0; margin-top: 18px; }
+.leather-cta .button-link { flex-shrink: 0; }
+@media (max-width: 760px) { .leather-heading, .leather-section-heading, .leather-material-grid, .leather-process, .leather-faq { grid-template-columns: 1fr; gap: 28px; } .leather-heading { padding-top: 32px; } .leather-detail-grid { gap: 22px; } .leather-page h3 { font-size: 21px; } .leather-details, .leather-process { padding-block: 48px; } .leather-materials { padding-block: 36px; } .leather-material-photo { min-height: 320px; } .leather-faq { padding-bottom: 48px; } .leather-cta > div { align-items: start; flex-direction: column; } }
+@media (max-width: 520px) { .leather-detail-grid { grid-template-columns: 1fr; } .leather-detail-grid article { padding-top: 16px; } .leather-hero figcaption { padding-inline: 16px; font-size: 8px; letter-spacing: .08em; } }

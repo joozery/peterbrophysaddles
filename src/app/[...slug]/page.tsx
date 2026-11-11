@@ -1,4 +1,3 @@
-import { products } from "@/lib/catalog";
 import { SaddleDetail } from "@/components/saddles/saddle-detail";
 import { ContactPageContent } from "@/components/contact/contact-page";
 import type { Metadata } from "next";
@@ -9,7 +8,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/home/site-header";
 import { SiteFooter } from "@/components/home/site-footer";
 import { AboutPageContent } from "@/components/about/about-page";
-import { SaddleCollection } from "@/components/home/saddle-collection";
+import { SaddleRange } from "@/components/saddles/saddle-range";
 import { CustomSaddles } from "@/components/home/custom-saddles";
 import { Testimonials } from "@/components/home/testimonials";
 import { TestimonialList } from "@/components/testimonials/testimonial-list";
@@ -21,6 +20,12 @@ import { getAboutContent } from "@/lib/server/about-content";
 import { getPricingContent } from "@/lib/server/pricing-content";
 import { PricingPageContent } from "@/components/pricing/pricing-page";
 import { getTestimonialsContent } from "@/lib/server/testimonials-content";
+import { getSiteProducts } from "@/lib/server/product-content";
+import { ProductGrid } from "@/components/saddles/product-grid";
+import { categoryOf } from "@/lib/catalog";
+import { LeatherPageContent } from "@/components/leather/leather-page";
+import { TackPageContent } from "@/components/leather/tack-page";
+import { pageContentDefaults } from "@/lib/page-content-defaults";
 
 const pages: Record<string, { title: string; description: string; image?: string }> = {
   "about": { title: "About Peter Brophy", description: "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider." },
@@ -34,7 +39,7 @@ const pages: Record<string, { title: string; description: string; image?: string
   "quality-materials": { title: "Quality Materials", description: "Carefully selected leathers and hardware for strength, beauty and long-lasting performance.", image: "/asset/Qualitymaterials.png" },
   "testimonials": { title: "Testimonials", description: "Experience Peter Brophy Saddles through the words of our riders." },
 };
-const saddleTypes = [["wade", "Wade"], ["campdraft", "Campdraft"], ["stock", "Stock"], ["reining", "Reining"], ["cutting", "Cutting"], ["western", "Custom Western"], ["vaquero", "Old Timer/Vaquero"]];
+const saddleTypes = [["wade", "Wade"], ["campdraft", "Campdraft"], ["stock", "Stock"], ["reining", "Reining"], ["cutting", "Cutting"], ["western", "Custom Western"], ["vaquero", "Old Timer"]];
 const saddleSlugs = ["wade-saddles", "campdraft-saddles", "stock-saddles", "reining-saddles", "cutting-saddles", "custom-western-saddles", "old-timer-vaquero-saddles"];
 saddleTypes.forEach(([image, label], index) => {
   pages[`saddle-range/${saddleSlugs[index]}`] = { title: `${label} Saddles`, description: `Explore ${label.toLowerCase()} saddles from Peter Brophy Saddles. Discuss your riding needs, fit and preferred details with us.`, image: `/images/saddles/${image}-v2.png` };
@@ -44,12 +49,20 @@ type Props = { params: Promise<{ slug: string[] }> };
 export function generateStaticParams() { return Object.keys(pages).map(path => ({ slug: path.split("/") })); }
 /** Built-in page info, overridden by what's saved in Admin → Pages & content. Unpublished pages return null. */
 async function resolvePage(path: string) {
-  const base = pages[path];
+  const base = pages[path] ?? await productPage(path);
   if (!base) return null;
   const saved = (await getContentPages())[path];
-  if (!saved) return base;
+  if (!saved) return { ...base, content: {} };
   if (!saved.published) return null;
-  return { ...base, title: saved.title || base.title, description: saved.description || base.description, image: saved.image || base.image };
+  return { ...base, title: saved.title || base.title, description: saved.description || base.description, image: saved.image || base.image, content: saved.content ?? {} };
+}
+
+/** Products added in the admin get a saddle-range page too. */
+async function productPage(path: string) {
+  const [section, id, ...rest] = path.split("/");
+  if (section !== "saddle-range" || !id || rest.length) return undefined;
+  const product = (await getSiteProducts()).find(p => p.id === id);
+  return product && { title: product.name, description: product.description ?? `Explore the ${product.name} from Peter Brophy Saddles. Discuss your riding needs, fit and preferred details with us.` };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -70,18 +83,22 @@ async function PageContent({ params }: Props) {
   const path = slug.join("/");
   const page = await resolvePage(path);
   if (!page) notFound();
-  if (path === "contact") return <ContactPageContent />;
+  if (path === "leather-work") return <LeatherPageContent {...page} />;
+  if (path === "tack") return <TackPageContent {...page} />;
+  if (path === "contact") return <ContactPageContent {...page} />;
   if (path === "about") return <AboutPageContent content={await getAboutContent()} />;
   if (path === "saddle-pricing") return <PricingPageContent content={await getPricingContent()} />;
   if (path.startsWith("saddle-range/")) {
+    const products = await getSiteProducts();
     const product = products.find(product => product.id === slug[1]);
     if (!product) notFound();
-    return <SaddleDetail product={product} />;
+    return <SaddleDetail product={product} products={products} />;
   }
   const home = await getHomeContent();
+  const copy = { ...pageContentDefaults["quality-materials"], ...page.content };
   return <>
     <section className="section-shell py-12 sm:py-16"><nav aria-label="Breadcrumb" className="mb-7 flex flex-wrap gap-3 text-xs text-stone-500"><Link href="/">Home</Link><span aria-hidden="true">/</span>{path.startsWith("saddle-range/") && <><Link href="/saddle-range">Saddle Range</Link><span aria-hidden="true">/</span></>}<span aria-current="page">{page.title}</span></nav><p className="eyebrow">Peter Brophy Saddles</p><h1 className="mt-4">{page.title}</h1><p className="body-copy mt-5 max-w-2xl">{page.description}</p></section>
-    {path === "saddle-range" ? <SaddleCollection content={home.collection} /> : path === "custom-saddles" ? <CustomSaddles content={home.custom} /> : path === "testimonials" ? <><Testimonials content={home.testimonial} /><TestimonialList content={await getTestimonialsContent()} /></> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" unoptimized={page.image.startsWith("https://")} /></div><div><h2>Made with purpose</h2><p className="body-copy my-6">Start a conversation about your horse, your riding and the details that matter to you.</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : "/contact"}>{path.startsWith("saddle-range/") ? "View product" : "Enquire now"}</ButtonLink></div></section> : null}
+    {path === "saddle-range" ? <SaddleRange products={await getSiteProducts()} /> : path === "custom-saddles" ? <CustomSaddles content={home.custom} /> : path === "testimonials" ? <><Testimonials content={home.testimonial} /><TestimonialList content={await getTestimonialsContent()} /></> : path === "saddle-trees" ? <ProductGrid products={(await getSiteProducts()).filter(p => categoryOf(p) === "saddle-trees")} /> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" unoptimized={page.image.startsWith("https://")} /></div><div><h2>{copy.text_heading}</h2><p className="body-copy my-6">{copy.text_body}</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : copy.href_button}>{path.startsWith("saddle-range/") ? "View product" : copy.text_button}</ButtonLink></div></section> : null}
     <Contact content={home.contact} />
   </>;
 }

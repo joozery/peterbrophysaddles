@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { ExternalLinkIcon, PlusIcon } from "@radix-ui/react-icons";
 import { type HomeContent, type LinkItem, defaultHome, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
@@ -101,17 +102,7 @@ export function HomeView() {
           <Text label="Text" rows={2} value={h.collection.body} onChange={v => set("collection", { body: v })} />
           <LinkFields label="Link" value={h.collection.link} onChange={v => set("collection", { link: v })} />
         </div>
-        <div className="admin-home-cards">
-          {h.collection.items.map((item, i) => {
-            const update = (patch: Partial<typeof item>) => set("collection", { items: h.collection.items.map((x, j) => j === i ? { ...x, ...patch } : x) });
-            return <div key={i} className="admin-home-card">
-              <p className="admin-home-card-num">Card {i + 1}</p>
-              <ImageUpload label="Photo" folder="pages" value={item.image} onChange={v => update({ image: v })} onBusyChange={busy} />
-              <Text label="Name" value={item.name} onChange={v => update({ name: v })} />
-              <Text label="Link" value={item.href} onChange={v => update({ href: v })} />
-            </div>;
-          })}
-        </div>
+        <p className="admin-hint">The saddle cards come from <Link href="/admin/products" className="admin-text-button">Products &amp; stock</Link>: one card per saddle type (e.g. Stock Saddle #01–#03 show as one “Stock Saddles” card), using its first product’s main photo, in display order. Hidden products are left out.</p>
       </Card>
 
       <Card title="4 · Custom saddles banner">

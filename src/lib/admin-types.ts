@@ -1,12 +1,12 @@
 // Shared admin data shapes + initial content. Used by both the browser store and the server.
-import { products as catalog } from "./catalog";
+import { categoryOf, products as catalog, type ProductCategory, type ProductSpec } from "./catalog";
 import type { AdminOrder, Enquiry } from "@/components/admin/sample-data";
 
 export type Customer = { id: string; name: string; email: string; phone: string; location: string; notes: string; createdAt: string };
-export type AdminProduct = { id: string; name: string; image: string; price: number; custom: boolean; active: boolean; description: string; stock: number };
+export type AdminProduct = { id: string; name: string; image: string; price: number; custom: boolean; active: boolean; description: string; specs?: ProductSpec[]; /** Extra photos after the main image. */ gallery?: string[]; stock: number; category?: ProductCategory; /** Position within its category; lower shows first. */ sort?: number };
 export type DiscountCode = { id: string; code: string; type: "percent" | "fixed"; value: number; active: boolean; expires: string; uses: number };
 export type Promotion = { enabled: boolean; eyebrow: string; highlight: string; title: string; description: string; ctaLabel: string; ctaHref: string; image: string; terms: string; delaySeconds: number };
-export type ContentPage = { slug: string; title: string; description: string; image: string; published: boolean; updatedAt: string };
+export type ContentPage = { slug: string; title: string; description: string; image: string; published: boolean; updatedAt: string; content?: Record<string, string> };
 export type Settings = { businessName: string; email: string; phone: string; address: string; /** Shown in payment emails, e.g. account name, BSB, account number. */ bankDetails: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean };
 export type AdminRole = "owner" | "admin" | "staff";
 export type AdminUser = { id: string; name: string; email: string; role: AdminRole; active: boolean; invitedAt: string; lastActive: string };
@@ -91,7 +91,11 @@ export const defaultPromotion: Promotion = {
 
 export const defaultSettings: Settings = { businessName: "Peter Brophy Saddles", email: "", phone: "", address: "", bankDetails: "", notifyOrders: true, notifyEnquiries: true, showPrices: true };
 
-export const seedProducts = (): AdminProduct[] => catalog.map(p => ({ id: p.id, name: p.name, image: `/images/${p.image}.webp`, price: p.price, custom: !!p.custom, active: true, description: "", stock: p.stock }));
+export const seedProducts = (): AdminProduct[] => catalog.map((p, i) => ({ category: categoryOf(p), sort: (i + 1) * 10, id: p.id, name: p.name, image: p.photo ?? (p.image ? `/images/${p.image}.webp` : ""), gallery: p.gallery ?? [], price: p.price, custom: !!p.custom, active: true, description: p.description ?? "", specs: p.specs ?? [], stock: p.stock }));
+
+/** Products by category (in productCategories order), then display order. */
+export const sortProducts = <T extends { category?: string; sort?: number }>(list: T[]) => [...list].sort((a, b) =>
+  (categoryOf(a) === categoryOf(b) ? 0 : categoryOf(a) === "saddles" ? -1 : 1) || (a.sort ?? 9999) - (b.sort ?? 9999));
 
 export const seedPages = (): ContentPage[] => [
   ["about", "About Peter Brophy", "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider.", ""],

@@ -1,7 +1,9 @@
 import "server-only";
+import { products as catalog } from "@/lib/catalog";
 import { type AdminState, LIST_KEYS, type ListName, SINGLETONS, type SingletonName, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, defaultTestimonials, mergeAbout, mergeHome, mergePricing, mergeTestimonials, seedPages, seedProducts } from "@/lib/admin-types";
 import type { Role } from "./auth";
 import { db } from "./db";
+import { validatePageContent } from "@/lib/validate-page-content";
 
 // Who may write to each collection. Deleting needs the `remove` roles.
 const PERMS: Record<ListName | SingletonName, { write: Role[]; remove: Role[] }> = {
@@ -46,6 +48,11 @@ async function runSeed() {
     d.collection("config").updateOne({ _id: "about" as never }, { $setOnInsert: { value: defaultAbout } }, { upsert: true }),
     d.collection("config").updateOne({ _id: "pricing" as never }, { $setOnInsert: { value: defaultPricing } }, { upsert: true }),
     d.collection("config").updateOne({ _id: "testimonials" as never }, { $setOnInsert: { value: defaultTestimonials } }, { upsert: true }),
+    // Product details added after the first seed: fill in only products never given a description or specs.
+    ...catalog.filter(p => p.description || p.specs?.length).map(p => d.collection("products").updateOne(
+      { id: p.id, description: "", specs: { $exists: false } },
+      { $set: { description: p.description ?? "", specs: p.specs ?? [] } },
+    )),
   ]);
   if (await meta.findOne({ _id: "seeded" })) { await seedConfig(); return; }
   if (!(await d.collection("products").countDocuments())) await d.collection("products").insertMany(seedProducts());
@@ -109,6 +116,12 @@ export async function getAbout() {
   return mergeAbout(doc?.value as Partial<AdminState["about"]> | undefined);
 }
 
+/** All products (visible or not) for the public site. */
+export async function getProducts() {
+  await seedIfEmpty();
+  return await (await db()).collection("products").find({}, { projection: { _id: 0 } }).sort({ _id: 1 }).toArray() as unknown as AdminState["products"];
+}
+
 /** Home page content for the public site. */
 export async function getHome() {
   await seedIfEmpty();
@@ -136,6 +149,10 @@ export async function applyOps(raw: unknown, role: Role): Promise<string | null>
       } else {
         if (!isPlainObject(op.doc) || !validKey(op.doc[LIST_KEYS[op.list]])) return "Invalid record.";
         if (!perm.write.includes(role)) return `Your role can’t edit ${op.list}.`;
+        if (op.list === "pages") {
+          const problem = validatePageContent(String(op.doc.slug), op.doc.content);
+          if (problem) return problem;
+        }
         if (op.list === "quotes" && (typeof op.doc.token !== "string" || !/^[A-Za-z0-9_-]{24,64}$/.test(op.doc.token))) return "Invalid quotation link token.";
         ops.push({ kind: "upsert", list: op.list, doc: op.doc });
       }
