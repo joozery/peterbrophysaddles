@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   images: { remotePatterns: r2Host ? [{ protocol: "https", hostname: r2Host }] : [] },
   /* config options here */
   cacheComponents: true,
+  experimental: {
+    agentUpgrade: "security",
+  },
   // The old demo inventory page moved into the admin panel.
   async redirects() {
     return [{ source: "/admin/inventory", destination: "/admin/products", permanent: false }];
