@@ -1,5 +1,5 @@
 import "server-only";
-import { type AdminState, LIST_KEYS, type ListName, SINGLETONS, type SingletonName, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, mergeAbout, mergeHome, mergePricing, seedPages, seedProducts } from "@/lib/admin-types";
+import { type AdminState, LIST_KEYS, type ListName, SINGLETONS, type SingletonName, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, defaultTestimonials, mergeAbout, mergeHome, mergePricing, mergeTestimonials, seedPages, seedProducts } from "@/lib/admin-types";
 import type { Role } from "./auth";
 import { db } from "./db";
 
@@ -10,12 +10,14 @@ const PERMS: Record<ListName | SingletonName, { write: Role[]; remove: Role[] }>
   customers: { write: ["owner", "admin"], remove: ["owner", "admin"] },
   products: { write: ["owner", "admin"], remove: ["owner", "admin"] },
   discountCodes: { write: ["owner", "admin"], remove: ["owner", "admin"] },
+  quotes: { write: ["owner", "admin", "staff"], remove: ["owner", "admin"] },
   pages: { write: ["owner", "admin"], remove: ["owner"] },
   promotion: { write: ["owner", "admin"], remove: [] },
   settings: { write: ["owner"], remove: [] },
   home: { write: ["owner", "admin"], remove: [] },
   about: { write: ["owner", "admin"], remove: [] },
   pricing: { write: ["owner", "admin"], remove: [] },
+  testimonials: { write: ["owner", "admin"], remove: [] },
 };
 
 export type SyncOp =
@@ -28,8 +30,14 @@ const isSingleton = (v: unknown): v is SingletonName => typeof v === "string" &&
 const isPlainObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 const validKey = (v: unknown): v is string => typeof v === "string" && v.length > 0 && v.length <= 80 && /^[\w./-]+$/.test(v);
 
-/** Inserts the real catalogue, page content and defaults the first time the database is used. */
-async function seedIfEmpty() {
+/** Inserts the real catalogue, page content and defaults the first time the database is used.
+ *  Runs once per server process (was every request: ~5 extra DB round-trips each time). */
+const g = globalThis as unknown as { __pbSeeded?: Promise<void> };
+function seedIfEmpty() {
+  g.__pbSeeded ??= runSeed().catch(err => { g.__pbSeeded = undefined; throw err; });
+  return g.__pbSeeded;
+}
+async function runSeed() {
   const d = await db();
   const meta = d.collection<{ _id: string; at: Date }>("meta");
   // Page content added after the first seed: insert only if missing (never overwrites edits).
@@ -37,6 +45,7 @@ async function seedIfEmpty() {
     d.collection("config").updateOne({ _id: "home" as never }, { $setOnInsert: { value: defaultHome } }, { upsert: true }),
     d.collection("config").updateOne({ _id: "about" as never }, { $setOnInsert: { value: defaultAbout } }, { upsert: true }),
     d.collection("config").updateOne({ _id: "pricing" as never }, { $setOnInsert: { value: defaultPricing } }, { upsert: true }),
+    d.collection("config").updateOne({ _id: "testimonials" as never }, { $setOnInsert: { value: defaultTestimonials } }, { upsert: true }),
   ]);
   if (await meta.findOne({ _id: "seeded" })) { await seedConfig(); return; }
   if (!(await d.collection("products").countDocuments())) await d.collection("products").insertMany(seedProducts());
@@ -51,17 +60,19 @@ export async function loadState(): Promise<AdminState> {
   await seedIfEmpty();
   const d = await db();
   const list = <T,>(name: ListName, sort: Record<string, 1 | -1>) => d.collection(name).find({}, { projection: { _id: 0 } }).sort(sort).toArray() as Promise<T[]>;
-  const config = await d.collection<{ _id: string; value: unknown }>("config").find({ _id: { $in: [...SINGLETONS] } }).toArray();
-  const single = <T,>(name: SingletonName, fallback: T) => ({ ...fallback, ...(config.find(c => c._id === name)?.value as T | undefined) });
-  const [orders, enquiries, customers, products, discountCodes, pages] = await Promise.all([
+  // One parallel batch: config + all lists (was two sequential round-trips).
+  const [config, orders, enquiries, customers, products, discountCodes, pages, quotes] = await Promise.all([
+    d.collection<{ _id: string; value: unknown }>("config").find({ _id: { $in: [...SINGLETONS] } }).toArray(),
     list<AdminState["orders"][number]>("orders", { date: -1, id: -1 }),
     list<AdminState["enquiries"][number]>("enquiries", { date: -1, id: -1 }),
     list<AdminState["customers"][number]>("customers", { name: 1 }),
     list<AdminState["products"][number]>("products", { _id: 1 }),
     list<AdminState["discountCodes"][number]>("discountCodes", { _id: 1 }),
     list<AdminState["pages"][number]>("pages", { _id: 1 }),
+    list<AdminState["quotes"][number]>("quotes", { date: -1, id: -1 }),
   ]);
-  return { orders, enquiries, customers, products, discountCodes, pages, promotion: single("promotion", defaultPromotion), settings: single("settings", defaultSettings), home: mergeHome(config.find(c => c._id === "home")?.value as Partial<AdminState["home"]> | undefined), about: mergeAbout(config.find(c => c._id === "about")?.value as Partial<AdminState["about"]> | undefined), pricing: mergePricing(config.find(c => c._id === "pricing")?.value as Partial<AdminState["pricing"]> | undefined) };
+  const single = <T,>(name: SingletonName, fallback: T) => ({ ...fallback, ...(config.find(c => c._id === name)?.value as T | undefined) });
+  return { orders, enquiries, customers, products, discountCodes, pages, quotes, promotion: single("promotion", defaultPromotion), settings: single("settings", defaultSettings), home: mergeHome(config.find(c => c._id === "home")?.value as Partial<AdminState["home"]> | undefined), about: mergeAbout(config.find(c => c._id === "about")?.value as Partial<AdminState["about"]> | undefined), pricing: mergePricing(config.find(c => c._id === "pricing")?.value as Partial<AdminState["pricing"]> | undefined), testimonials: mergeTestimonials(config.find(c => c._id === "testimonials")?.value as Partial<AdminState["testimonials"]> | undefined) };
 }
 
 export async function getPromotion() {
@@ -82,6 +93,13 @@ export async function getPricing() {
   await seedIfEmpty();
   const doc = await (await db()).collection<{ _id: string; value: unknown }>("config").findOne({ _id: "pricing" });
   return mergePricing(doc?.value as Partial<AdminState["pricing"]> | undefined);
+}
+
+/** Testimonials page content for the public site. */
+export async function getTestimonials() {
+  await seedIfEmpty();
+  const doc = await (await db()).collection<{ _id: string; value: unknown }>("config").findOne({ _id: "testimonials" });
+  return mergeTestimonials(doc?.value as Partial<AdminState["testimonials"]> | undefined);
 }
 
 /** About page content for the public site. */
@@ -118,6 +136,7 @@ export async function applyOps(raw: unknown, role: Role): Promise<string | null>
       } else {
         if (!isPlainObject(op.doc) || !validKey(op.doc[LIST_KEYS[op.list]])) return "Invalid record.";
         if (!perm.write.includes(role)) return `Your role can’t edit ${op.list}.`;
+        if (op.list === "quotes" && (typeof op.doc.token !== "string" || !/^[A-Za-z0-9_-]{24,64}$/.test(op.doc.token))) return "Invalid quotation link token.";
         ops.push({ kind: "upsert", list: op.list, doc: op.doc });
       }
     } else return "Invalid change.";
@@ -130,8 +149,38 @@ export async function applyOps(raw: unknown, role: Role): Promise<string | null>
     else {
       const key = LIST_KEYS[op.list];
       const { _id, ...doc } = op.doc; void _id;
+      if (op.list === "orders") {
+        // Payment links are managed by the server (Stripe API + webhook). Never let a stale browser copy
+        // overwrite them, and keep an order paid if Stripe has already confirmed full payment.
+        const existing = await d.collection("orders").findOne({ id: doc.id }, { projection: { paymentLinks: 1, paid: 1 } });
+        if (existing?.paymentLinks) {
+          doc.paymentLinks = existing.paymentLinks;
+          const paidAmount = (existing.paymentLinks as { status: string; amount: number }[]).filter(l => l.status === "paid").reduce((s, l) => s + l.amount, 0);
+          const total = ((doc.items ?? []) as { price: number; quantity: number }[]).reduce((s, i) => s + i.price * i.quantity, 0);
+          if (existing.paid && paidAmount > 0 && paidAmount >= total) doc.paid = true;
+        } else delete doc.paymentLinks;
+      }
+      if (op.list === "quotes") {
+        // The customer can accept online; a stale admin copy must not undo that.
+        const existing = await d.collection("quotes").findOne({ id: doc.id }, { projection: { status: 1, acceptedAt: 1, token: 1 } });
+        if (existing?.status === "accepted" && doc.status !== "accepted" && !doc.reopened) { doc.status = "accepted"; doc.acceptedAt = existing.acceptedAt; }
+        if (existing?.token) doc.token = existing.token; // the customer's link never changes
+        delete doc.reopened;
+      }
       await d.collection(op.list).replaceOne({ [key]: doc[key] }, doc, { upsert: true });
     }
   }
   return null;
+}
+
+/** A quotation for its customer-facing page, found by its private token. Includes business details for the letterhead. */
+export async function getQuoteByToken(token: string) {
+  if (!/^[A-Za-z0-9_-]{24,64}$/.test(token)) return null;
+  const d = await db();
+  const [quote, settings] = await Promise.all([
+    d.collection<AdminState["quotes"][number]>("quotes").findOne({ token }, { projection: { _id: 0 } }),
+    d.collection<{ _id: string; value: Partial<AdminState["settings"]> }>("config").findOne({ _id: "settings" }),
+  ]);
+  if (!quote || quote.status === "draft") return null; // drafts aren't shared yet
+  return { quote, business: { ...defaultSettings, ...settings?.value } };
 }

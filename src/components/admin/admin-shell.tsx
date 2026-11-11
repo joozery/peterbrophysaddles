@@ -5,21 +5,24 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Dialog, DropdownMenu } from "radix-ui";
-import { ArchiveIcon, ChatBubbleIcon, Cross2Icon, DashboardIcon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, HomeIcon, IdCardIcon, LockClosedIcon, PersonIcon, ReaderIcon, StarIcon, TokensIcon } from "@radix-ui/react-icons";
+import { ArchiveIcon, CardStackIcon, ClipboardIcon, ChatBubbleIcon, Cross2Icon, DashboardIcon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, HomeIcon, IdCardIcon, LockClosedIcon, PersonIcon, QuoteIcon, ReaderIcon, StarIcon, TokensIcon } from "@radix-ui/react-icons";
 import { type AdminRole, loadAdmin, onSyncError, signOut, useAdminStatus } from "@/lib/admin-store";
 
 const links: { href: string; label: string; icon: typeof DashboardIcon; roles?: AdminRole[] }[] = [
   { href: "/admin", label: "Dashboard", icon: DashboardIcon },
   { href: "/admin/orders", label: "Orders", icon: ReaderIcon },
   { href: "/admin/products", label: "Products & stock", icon: ArchiveIcon },
+  { href: "/admin/quotes", label: "Quotations", icon: ClipboardIcon },
   { href: "/admin/enquiries", label: "Enquiries", icon: ChatBubbleIcon },
   { href: "/admin/customers", label: "Customers", icon: PersonIcon },
   { href: "/admin/promotions", label: "Promotions", icon: StarIcon, roles: ["owner", "admin"] },
   { href: "/admin/home", label: "Home page", icon: HomeIcon, roles: ["owner", "admin"] },
   { href: "/admin/about", label: "About page", icon: IdCardIcon, roles: ["owner", "admin"] },
   { href: "/admin/pricing", label: "Pricing page", icon: TokensIcon, roles: ["owner", "admin"] },
+  { href: "/admin/testimonials", label: "Testimonials", icon: QuoteIcon, roles: ["owner", "admin"] },
   { href: "/admin/pages", label: "Pages & content", icon: FileTextIcon, roles: ["owner", "admin"] },
   { href: "/admin/admins", label: "Admin users", icon: LockClosedIcon },
+  { href: "/admin/payments", label: "Payments", icon: CardStackIcon, roles: ["owner"] },
   { href: "/admin/settings", label: "Settings", icon: GearIcon },
 ];
 const roleLabel: Record<AdminRole, string> = { owner: "Owner", admin: "Admin", staff: "Staff" };

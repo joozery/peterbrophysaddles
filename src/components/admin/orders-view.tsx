@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { money } from "@/lib/catalog";
 import { type OrderWithNote, newId, today, updateAdmin, useAdmin } from "@/lib/admin-store";
-import { Badge, Card, ConfirmDelete, Field, FormDrawer, PageHeader, SearchBox, str, useToast } from "./admin-ui";
+import { Badge, Card, ConfirmDelete, Field, FormDrawer, PageHeader, SearchBox, dollarsToCents, str, useToast } from "./admin-ui";
 import { type OrderStatus, formatDate, orderStatusLabel, orderTotal } from "./sample-data";
+import { PaymentLinks } from "./payment-links";
 
 const filters: ("all" | OrderStatus)[] = ["all", "pending", "in-production", "ready", "shipped", "cancelled"];
 
@@ -23,7 +24,8 @@ export function OrdersView() {
   const params = useSearchParams();
   const [filter, setFilter] = useState<(typeof filters)[number]>("all");
   const [query, setQuery] = useState(params.get("q") ?? "");
-  const [editing, setEditing] = useState<OrderWithNote | null>(null);
+  // ?open=PB-XXXX (e.g. from an enquiry) opens that order straight away.
+  const [editing, setEditing] = useState<OrderWithNote | null>(() => orders.find(o => o.id === params.get("open")) ?? null);
   const [creating, setCreating] = useState(false);
   const { toast, run } = useToast();
 
@@ -32,6 +34,9 @@ export function OrdersView() {
     return orders.filter(o => (filter === "all" || o.status === filter) && (!q || `${o.id} ${o.customer} ${o.email}`.toLowerCase().includes(q)));
   }, [orders, filter, query]);
   const sellable = products.filter(p => !p.custom);
+  const [productChoice, setProductChoice] = useState("");
+  // Payment-link actions update the order in the store; show the fresh copy in the open drawer.
+  const current = editing ? orders.find(o => o.id === editing.id) ?? editing : null;
 
   return <>
     <PageHeader eyebrow="Sales" title="Orders" description="Track every saddle from order to delivery." actions={<>
@@ -52,7 +57,7 @@ export function OrdersView() {
             <td><strong>{o.id}</strong><small>{formatDate(o.date)}</small></td>
             <td>{o.customer}<small>{o.location}</small></td>
             <td>{o.items.map(i => `${i.name}${i.quantity > 1 ? ` × ${i.quantity}` : ""}`).join(", ")}</td>
-            <td><Badge tone={o.paid ? "paid" : "unpaid"}>{o.paid ? "Paid" : "Unpaid"}</Badge></td>
+            <td><Badge tone={o.paid ? "paid" : "unpaid"}>{o.paid ? "Paid" : o.paymentLinks?.some(l => l.status === "paid") ? "Part paid" : o.paymentLinks?.some(l => l.status === "open") ? "Link sent" : "Unpaid"}</Badge></td>
             <td><Badge tone={o.status}>{orderStatusLabel[o.status]}</Badge></td>
             <td className="num">{money(orderTotal(o))}</td>
           </tr>)}
@@ -71,27 +76,31 @@ export function OrdersView() {
         updateAdmin(s => ({ ...s, orders: s.orders.map(o => o.id === editing.id ? { ...o, ...patch } : o) }));
         run(() => {}, `Order ${editing.id} saved.`);
       }}>
-      {editing && <>
-        <div className="admin-field-group"><h3>Customer</h3><p><strong>{editing.customer}</strong></p><p className="admin-muted">{editing.email}</p><p className="admin-muted">{editing.location}</p></div>
-        <div className="admin-field-group"><h3>Items</h3>{editing.items.map(i => <div key={i.name} className="admin-line"><span>{i.name} × {i.quantity}</span><span>{money(i.price * i.quantity)}</span></div>)}<div className="admin-line is-total"><span>Total</span><span>{money(orderTotal(editing))}</span></div></div>
+      {current && <>
+        <div className="admin-field-group"><h3>Customer</h3><p><strong>{current.customer}</strong></p><p className="admin-muted">{current.email}</p><p className="admin-muted">{current.location}</p></div>
+        <div className="admin-field-group"><h3>Items</h3>{current.items.map(i => <div key={i.name} className="admin-line"><span>{i.name} × {i.quantity}</span><span>{money(i.price * i.quantity)}</span></div>)}<div className="admin-line is-total"><span>Total</span><span>{money(orderTotal(current))}</span></div></div>
+        <PaymentLinks key={current.id} order={current} />
         <div className="admin-field-group"><h3>Status</h3>
-          <Field label="Order status"><select name="status" className="admin-input" defaultValue={editing.status}>{Object.entries(orderStatusLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
-          <label className="admin-check"><input type="checkbox" name="paid" defaultChecked={editing.paid} />Payment received</label>
-          <Field label="Internal note"><textarea name="note" className="admin-input" rows={3} defaultValue={editing.note ?? ""} placeholder="e.g. Tree fitted, waiting on tooling" /></Field>
+          <Field label="Order status"><select name="status" className="admin-input" defaultValue={current.status}>{Object.entries(orderStatusLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
+          <label className="admin-check"><input key={String(current.paid)} type="checkbox" name="paid" defaultChecked={current.paid} />Payment received (bank transfer or Stripe)</label>
+          <Field label="Internal note"><textarea name="note" className="admin-input" rows={3} defaultValue={current.note ?? ""} placeholder="e.g. Tree fitted, waiting on tooling" /></Field>
         </div>
       </>}
     </FormDrawer>
 
     {/* New order */}
-    <FormDrawer open={creating} onOpenChange={setCreating} eyebrow="Sales" title="New order" description="Record a phone, workshop or custom order." submitLabel="Create order"
+    <FormDrawer open={creating} onOpenChange={setCreating} eyebrow="Sales" title="New order" description="Record a phone, workshop or quotation order. After creating it, open the order to send a Stripe payment link." submitLabel="Create order"
       onSubmit={data => {
-        const name = str(data, "customer"), email = str(data, "email").toLowerCase(), product = sellable.find(p => p.id === str(data, "product"));
+        const name = str(data, "customer"), email = str(data, "email").toLowerCase(), isCustom = str(data, "product") === "__custom", product = sellable.find(p => p.id === str(data, "product"));
+        const customName = str(data, "itemName"), customPrice = dollarsToCents(str(data, "itemPrice"));
         const quantity = Number(data.get("quantity"));
         if (!name || !email) return "Customer name and email are required.";
         if (!/^\S+@\S+\.\S+$/.test(email)) return "Enter a valid email address.";
-        if (!product) return "Choose a product.";
+        if (isCustom && !customName) return "Describe the item, e.g. “Custom wade saddle as per quotation Q-1234”.";
+        if (isCustom && (Number.isNaN(customPrice) || customPrice <= 0)) return "Enter the quoted price.";
+        if (!isCustom && !product) return "Choose a product.";
         if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) return "Quantity must be between 1 and 99.";
-        const order: OrderWithNote = { id: newId("PB"), customer: name, email, location: str(data, "location"), date: today(), items: [{ name: product.name, quantity, price: product.price }], status: str(data, "status") as OrderStatus, paid: data.get("paid") === "on", note: str(data, "note") };
+        const order: OrderWithNote = { id: newId("PB"), customer: name, email, location: str(data, "location"), date: today(), items: [isCustom ? { name: customName, quantity, price: customPrice } : { name: product!.name, quantity, price: product!.price }], status: str(data, "status") as OrderStatus, paid: data.get("paid") === "on", note: str(data, "note") };
         updateAdmin(s => ({ ...s, orders: [order, ...s.orders], customers: s.customers.some(c => c.email === email) ? s.customers : [...s.customers, { id: newId("CU"), name, email, phone: "", location: order.location, notes: "", createdAt: today() }] }));
         run(() => {}, `Order ${order.id} created.`);
       }}>
@@ -99,7 +108,8 @@ export function OrdersView() {
         <Field label="Customer name"><input name="customer" className="admin-input" required list="admin-customer-names" /></Field>
         <datalist id="admin-customer-names">{customers.map(c => <option key={c.id} value={c.name} />)}</datalist>
         <div className="admin-form-row"><Field label="Email"><input name="email" type="email" className="admin-input" required /></Field><Field label="Location"><input name="location" className="admin-input" placeholder="Town, State" /></Field></div>
-        <div className="admin-form-row"><Field label="Product"><select name="product" className="admin-input" required>{sellable.map(p => <option key={p.id} value={p.id}>{p.name} — {money(p.price)}</option>)}</select></Field><Field label="Quantity"><input name="quantity" type="number" min={1} max={99} defaultValue={1} className="admin-input" /></Field></div>
+        <div className="admin-form-row"><Field label="Product"><select name="product" className="admin-input" required value={productChoice || sellable[0]?.id || "__custom"} onChange={e => setProductChoice(e.target.value)}><option value="__custom">Custom item / quotation…</option>{sellable.map(p => <option key={p.id} value={p.id}>{p.name} — {money(p.price)}</option>)}</select></Field><Field label="Quantity"><input name="quantity" type="number" min={1} max={99} defaultValue={1} className="admin-input" /></Field></div>
+        {(productChoice || sellable[0]?.id || "__custom") === "__custom" && <div className="admin-form-row"><Field label="Item description" hint="As on the quotation."><input name="itemName" className="admin-input" maxLength={120} placeholder="Custom wade saddle — quotation Q-1234" /></Field><Field label="Price each (AUD)"><input name="itemPrice" className="admin-input" inputMode="decimal" placeholder="4200.00" /></Field></div>}
         <Field label="Status"><select name="status" className="admin-input" defaultValue="pending">{Object.entries(orderStatusLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>
         <label className="admin-check"><input type="checkbox" name="paid" />Payment received</label>
         <Field label="Internal note"><textarea name="note" className="admin-input" rows={3} /></Field>

@@ -58,12 +58,17 @@ export async function currentUser(): Promise<SessionUser | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const d = await db();
-  const session = await d.collection("sessions").findOne({ tokenHash: sha256(token), expiresAt: { $gt: new Date() } });
-  if (!session) return null;
-  const admin = await d.collection<AdminDoc>("admins").findOne({ id: session.adminId, active: true });
+  // Session + admin in one round-trip (the database is remote, so each trip costs ~40 ms).
+  const [row] = await d.collection("sessions").aggregate<{ admin: AdminDoc[] }>([
+    { $match: { tokenHash: sha256(token), expiresAt: { $gt: new Date() } } },
+    { $limit: 1 },
+    { $lookup: { from: "admins", localField: "adminId", foreignField: "id", as: "admin", pipeline: [{ $match: { active: true } }] } },
+  ]).toArray();
+  const admin = row?.admin[0];
   if (!admin) return null;
   const today = new Date().toISOString().slice(0, 10);
-  if (admin.lastActive !== today) await d.collection("admins").updateOne({ id: admin.id }, { $set: { lastActive: today } });
+  // Don't make the request wait for this bookkeeping write.
+  if (admin.lastActive !== today) d.collection("admins").updateOne({ id: admin.id }, { $set: { lastActive: today } }).catch(err => console.error("lastActive", err));
   return publicAdmin(admin);
 }
 

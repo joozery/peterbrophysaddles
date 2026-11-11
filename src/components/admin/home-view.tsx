@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLinkIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon, PlusIcon } from "@radix-ui/react-icons";
 import { type HomeContent, type LinkItem, defaultHome, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
-import { Card, Field, PageHeader, useToast } from "./admin-ui";
+import { Card, Field, ListControls, PageHeader, move, useToast } from "./admin-ui";
 import { ImageUpload, isImageSrc } from "./image-upload";
 
 type Section = keyof HomeContent;
@@ -23,7 +23,7 @@ function validate(h: HomeContent): string | null {
   const links: [string, LinkItem][] = [["Hero main button", h.hero.primary], ["Hero second button", h.hero.secondary], ["Heritage link", h.heritage.link], ["Collection link", h.collection.link], ["Custom saddles button", h.custom.cta], ...h.services.items.map((s, i) => [`Service ${i + 1} link`, s.link] as [string, LinkItem])];
   for (const [name, l] of links) if (l.label && !l.href.startsWith("/")) return `${name}: the link must start with / (a page on this site).`;
   for (const [i, item] of h.collection.items.entries()) if (!item.href.startsWith("/")) return `Saddle card ${i + 1}: the link must start with /.`;
-  const images = [h.hero.image, h.heritage.image, h.heritage.backgroundImage, h.custom.image, h.testimonial.image, ...h.collection.items.map(i => i.image), ...h.services.items.map(s => s.image)];
+  const images = [h.hero.image, h.heritage.image, h.heritage.backgroundImage, h.custom.image, h.testimonial.image, ...h.hero.slides, ...h.collection.items.map(i => i.image), ...h.services.items.map(s => s.image)];
   if (images.some(src => src && !isImageSrc(src))) return "An image path must start with / or https://.";
   if (!h.hero.title.trim()) return "The hero title can’t be empty.";
   return null;
@@ -67,7 +67,16 @@ export function HomeView() {
             <LinkFields label="Main button" value={h.hero.primary} onChange={v => set("hero", { primary: v })} />
             <LinkFields label="Second button" value={h.hero.secondary} onChange={v => set("hero", { secondary: v })} />
           </div>
-          <ImageUpload label="Background image" folder="pages" value={h.hero.image} onChange={v => set("hero", { image: v })} onBusyChange={busy} />
+          <div className="admin-form">
+            <ImageUpload label="Background image (slide 1)" folder="pages" value={h.hero.image} onChange={v => set("hero", { image: v })} onBusyChange={busy} />
+            {h.hero.slides.map((src, i) => <div key={i} className="admin-home-card">
+              <div className="admin-card-head is-tight"><p className="admin-home-card-num">Slide {i + 2}</p><ListControls index={i} count={h.hero.slides.length} min={0} onMove={to => set("hero", { slides: move(h.hero.slides, i, to) })} onRemove={() => set("hero", { slides: h.hero.slides.filter((_, j) => j !== i) })} /></div>
+              <ImageUpload label={`Background image (slide ${i + 2})`} folder="pages" value={src} onChange={v => set("hero", { slides: h.hero.slides.map((x, j) => j === i ? v : x) })} onBusyChange={busy} />
+            </div>)}
+            <button type="button" className="admin-button" disabled={h.hero.slides.length >= 7} onClick={() => set("hero", { slides: [...h.hero.slides, ""] })}><PlusIcon aria-hidden="true" />Add another background image</button>
+            <p className="admin-hint">{h.hero.slides.filter(Boolean).length ? "With two or more images the background changes automatically as a slideshow." : "Add more images to turn the background into a slideshow."}</p>
+            {h.hero.slides.some(Boolean) && <Field label="Seconds per slide"><input className="admin-input" type="number" min={3} max={20} value={h.hero.slideSeconds} onChange={e => set("hero", { slideSeconds: Math.min(20, Math.max(3, Number(e.target.value) || 6)) })} /></Field>}
+          </div>
         </div>
       </Card>
 

@@ -6,7 +6,6 @@ import { Collapsible, Dialog, NavigationMenu } from "radix-ui";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CartLink } from "@/components/shop/cart-link";
 import "./navbar-dropdown.css";
 import "./mobile-navigation.css";
 import "./site-header.css";
@@ -55,7 +54,6 @@ export function SiteHeader() {
     </NavigationMenu.Root>
 
     <div className="header-actions">
-      <CartLink />
       <Link href="/contact" className="header-enquire">Enquire Now</Link>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger className="mobile-menu" aria-label="Open navigation"><span /><span /><span /></Dialog.Trigger>

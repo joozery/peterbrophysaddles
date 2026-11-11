@@ -185,3 +185,17 @@ button:disabled { cursor: not-allowed; opacity: .45; transform: none !important;
 .footer-legal a:hover { color: #b89a61; }
 .form-privacy-note { font-size: 11px; color: #7a705f; }
 .form-privacy-note a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Hero slideshow */
+.hero-slides { position: absolute; inset: 0; }
+.hero-slide { opacity: 0; transform: scale(1.04); transition: opacity 1.4s ease, transform 7s ease-out; }
+.hero-slide.is-active { opacity: 1; transform: scale(1); }
+.hero-dots { position: absolute; z-index: 20; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; }
+.hero-dots button { width: 26px; height: 3px; padding: 0; border: 0; background: #f0ece266; cursor: pointer; transition: background .3s, width .3s; }
+.hero-dots button.is-active { width: 42px; background: #b89a61; }
+.hero-dots button:hover { background: #f0ece2; }
+.hero-dots button:focus-visible { outline: 2px solid #b89a61; outline-offset: 4px; }
+.hero-dots .hero-dots-toggle { width: auto; height: auto; margin-left: 6px; background: none; color: #f0ece2b3; font-size: 9px; letter-spacing: -1px; }
+.hero-dots .hero-dots-toggle:hover { background: none; color: #f0ece2; }
+@media (max-width: 640px) { .hero-dots { bottom: 14px; } }
+@media (prefers-reduced-motion: reduce) { .hero-slide { transform: none; transition: opacity .01s; } }

@@ -7,7 +7,7 @@ export type AdminProduct = { id: string; name: string; image: string; price: num
 export type DiscountCode = { id: string; code: string; type: "percent" | "fixed"; value: number; active: boolean; expires: string; uses: number };
 export type Promotion = { enabled: boolean; eyebrow: string; highlight: string; title: string; description: string; ctaLabel: string; ctaHref: string; image: string; terms: string; delaySeconds: number };
 export type ContentPage = { slug: string; title: string; description: string; image: string; published: boolean; updatedAt: string };
-export type Settings = { businessName: string; email: string; phone: string; address: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean };
+export type Settings = { businessName: string; email: string; phone: string; address: string; /** Shown in payment emails, e.g. account name, BSB, account number. */ bankDetails: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean };
 export type AdminRole = "owner" | "admin" | "staff";
 export type AdminUser = { id: string; name: string; email: string; role: AdminRole; active: boolean; invitedAt: string; lastActive: string };
 export type OrderWithNote = AdminOrder & { note?: string };
@@ -16,7 +16,7 @@ export type EnquiryWithReplies = Enquiry & { replies?: { date: string; text: str
 /** Editable home page content. Titles may contain line breaks ("\n"). Images are /public paths or uploaded URLs. */
 export type LinkItem = { label: string; href: string };
 export type HomeContent = {
-  hero: { eyebrow: string; title: string; description: string; image: string; primary: LinkItem; secondary: LinkItem };
+  hero: { eyebrow: string; title: string; description: string; image: string; /** Extra background images — 2+ in total makes a slideshow. */ slides: string[]; slideSeconds: number; primary: LinkItem; secondary: LinkItem };
   heritage: { eyebrow: string; title: string; body: string; image: string; backgroundImage: string; link: LinkItem };
   collection: { eyebrow: string; title: string; body: string; link: LinkItem; items: { name: string; image: string; href: string }[] };
   custom: { eyebrow: string; title: string; body: string; image: string; cta: LinkItem };
@@ -43,15 +43,43 @@ export type PricingContent = {
   facebook: { title: string; text: string; buttonLabel: string; url: string };
 };
 
+/** Editable Testimonials page. Review body: blank line = new paragraph. */
+export type ReviewLayout = "featured" | "wide" | "standard";
+export type Review = { name: string; tag: string; headline: string; body: string; badge: string; layout: ReviewLayout; visible: boolean };
+export type TestimonialsContent = {
+  intro: { eyebrow: string; title: string; accent: string; text: string };
+  reviews: { items: Review[] };
+};
+
+/** A quotation sent to a customer. `token` makes the customer's view link unguessable (/quote/<token>). Prices in AUD cents. */
+export type QuoteStatus = "draft" | "sent" | "accepted" | "declined";
+export type QuoteItem = { description: string; details: string; quantity: number; price: number };
+export type Quote = {
+  id: string; token: string; enquiryId?: string; orderId?: string;
+  customer: string; email: string; phone: string; address: string;
+  title: string; date: string; validUntil: string; items: QuoteItem[]; notes: string; terms: string;
+  status: QuoteStatus; sentAt?: string; acceptedAt?: string; createdBy: string;
+  /** Set only when an admin deliberately reopens a declined/accepted quote; the server strips it after use. */
+  reopened?: boolean;
+};
+export const quoteTotal = (q: Pick<Quote, "items">) => q.items.reduce((s, i) => s + i.price * i.quantity, 0);
+export const DEFAULT_QUOTE_TERMS = [
+  "All prices are in Australian dollars (AUD).",
+  "A 50% deposit is required to begin work; the balance is due before dispatch.",
+  "Pay by card through the secure Stripe link we send, or by direct bank transfer.",
+  "Build time is confirmed when the deposit is received. Tree fitting and measurements must be completed before work starts.",
+  "This quotation is valid until the date shown.",
+].join("\n");
+
 export type AdminState = {
   orders: OrderWithNote[]; enquiries: EnquiryWithReplies[]; customers: Customer[]; products: AdminProduct[];
-  discountCodes: DiscountCode[]; promotion: Promotion; pages: ContentPage[]; settings: Settings; home: HomeContent; about: AboutContent; pricing: PricingContent;
+  discountCodes: DiscountCode[]; promotion: Promotion; pages: ContentPage[]; settings: Settings; home: HomeContent; about: AboutContent; pricing: PricingContent; testimonials: TestimonialsContent; quotes: Quote[];
 };
 
 /** List collections and the field that identifies each document. */
-export const LIST_KEYS = { orders: "id", enquiries: "id", customers: "id", products: "id", discountCodes: "id", pages: "slug" } as const;
+export const LIST_KEYS = { orders: "id", enquiries: "id", customers: "id", products: "id", discountCodes: "id", pages: "slug", quotes: "id" } as const;
 export type ListName = keyof typeof LIST_KEYS;
-export const SINGLETONS = ["promotion", "settings", "home", "about", "pricing"] as const;
+export const SINGLETONS = ["promotion", "settings", "home", "about", "pricing", "testimonials"] as const;
 export type SingletonName = (typeof SINGLETONS)[number];
 
 export const defaultPromotion: Promotion = {
@@ -61,7 +89,7 @@ export const defaultPromotion: Promotion = {
   terms: "Preview promotion · Offer subject to confirmation. No discount is applied at checkout.", delaySeconds: 1.5,
 };
 
-export const defaultSettings: Settings = { businessName: "Peter Brophy Saddles", email: "", phone: "", address: "", notifyOrders: true, notifyEnquiries: true, showPrices: true };
+export const defaultSettings: Settings = { businessName: "Peter Brophy Saddles", email: "", phone: "", address: "", bankDetails: "", notifyOrders: true, notifyEnquiries: true, showPrices: true };
 
 export const seedProducts = (): AdminProduct[] => catalog.map(p => ({ id: p.id, name: p.name, image: `/images/${p.image}.webp`, price: p.price, custom: !!p.custom, active: true, description: "", stock: p.stock }));
 
@@ -85,6 +113,8 @@ export const defaultHome: HomeContent = {
     title: "Custom saddles\nfor a higher\nstandard",
     description: "Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider.",
     image: "/cover/hero.png",
+    slides: [],
+    slideSeconds: 6,
     primary: { label: "Explore saddle collection", href: "/saddle-range" },
     secondary: { label: "About our work", href: "/about" },
   },
@@ -134,7 +164,7 @@ export const defaultHome: HomeContent = {
 export function mergeHome(saved: Partial<HomeContent> | undefined | null): HomeContent {
   const s = saved ?? {};
   return {
-    hero: { ...defaultHome.hero, ...s.hero, primary: { ...defaultHome.hero.primary, ...s.hero?.primary }, secondary: { ...defaultHome.hero.secondary, ...s.hero?.secondary } },
+    hero: { ...defaultHome.hero, ...s.hero, slides: Array.isArray(s.hero?.slides) ? s.hero.slides.filter(x => typeof x === "string" && x) : [], primary: { ...defaultHome.hero.primary, ...s.hero?.primary }, secondary: { ...defaultHome.hero.secondary, ...s.hero?.secondary } },
     heritage: { ...defaultHome.heritage, ...s.heritage, link: { ...defaultHome.heritage.link, ...s.heritage?.link } },
     collection: { ...defaultHome.collection, ...s.collection, link: { ...defaultHome.collection.link, ...s.collection?.link }, items: s.collection?.items?.length ? s.collection.items : defaultHome.collection.items },
     custom: { ...defaultHome.custom, ...s.custom, cta: { ...defaultHome.custom.cta, ...s.custom?.cta } },
@@ -237,4 +267,41 @@ export const defaultPricing: PricingContent = {
     buttonLabel: "Facebook",
     url: "",
   },
+};
+
+const review = (name: string, tag: string, headline: string, body: string, layout: ReviewLayout = "standard", badge = ""): Review => ({ name, tag, headline, body, badge, layout, visible: true });
+
+/** Seed: Testimonials page (reviews supplied by Peter Brophy Saddles). */
+export const defaultTestimonials: TestimonialsContent = {
+  intro: {
+    eyebrow: "In their words",
+    title: "Riders, horses and saddle makers",
+    accent: "who trust the Brophy name",
+    text: "From Queensland cattle country to the hills of Scotland — honest stories from the people who ride in, and build on, Peter's work.",
+  },
+  reviews: { items: [
+    review("Peta", "Custom Old Timer saddle · Darling Downs, QLD", "No stone was left unturned!",
+      "On a visit to one of the 2011 ANH courses in Esk, Peter & Thip Brophy and I sat down in Ken & Kathy's green shed (dining hall) for what seemed like a couple of hours going over every intricate detail of what I wanted in my new custom saddle. Peter was so helpful in explaining how everything fitted together. Using great photographs and drawings, he showed me the many options I could have regarding the overall design to suit my body shape, as well as all of the amazing leather stamping patterns. No stone was left unturned!\n\nPeter & Thip even drove for several hours to my farm on the Darling Downs to fit the tree to my horses before the saddle was built to ensure it was the perfect fit! You can see Peter's masterpiece in the Old Timer Saddles section (fourth photo). The attention to detail is outstanding. I doubt there would be many other saddler makers in Australia who have this level of craftsmanship.\n\nI love this saddle. My horses feel so comfortable when we ride together. They are more uphill and their paces feel relaxed. Peter & Thip also made me a matching bridle, breastplate, and saddle bags. You can view the bridle in the Tack section (second photo). I feel very privileged to ride in such a gorgeous saddle. Thank you to Peter & Thip for all of their amazing work. They are true professionals!",
+      "featured"),
+    review("Michelle", "Cutting saddle", "The craftsmanship is outstanding.",
+      "Thank you so much for the beautiful saddle you made for me! The craftsmanship is outstanding I recommend your saddles to everyone. My saddle is on here have a look in the cutting saddles section it is the chocolate one with the inset on the seat....love it!!"),
+    review("Jane", "Scotland", "I wouldn't swap my Brophy saddle for anything.",
+      "I bought my wonderful saddle from Peter two years ago. Poor thing gets used almost everyday, in all weathers (thats saying something here in Scotland) and I love it more every time I use it. I couldn't possibly buy any other kind of saddle now. I am totally spoilt! I trained in classical riding before I moved over into horsemanship so I am pretty picky as to how a saddle positions its rider.\n\nI can honestly say that wether I am using my saddle for the first time on a baby horse, schooling my older horse or flying across the hills I wouldn't swap my Brophy saddle for anything else I have ever ridden in. Even ordering and buying over long distance was easy!"),
+    review("Heidi", "Custom wade saddle", "We rope and ride and Pete's gear is the best!",
+      "I have an awesome wade saddle made by Pete Brophy. It was custom made to fit me and my horse and everyone who has ever ridden in it has said what a great saddle it is. Not only does it look AMAZING but it is a great fit on all different shapes and sizes of horse. We rope and ride and Pete's gear is the best!"),
+    review("Dan", "Dan Baker Custom Saddles", "I have used many tree makers over the years and have found Pete's to be the best.",
+      "I'm Dan from Dan Baker Custom Saddles. I have been making saddles now for 23 years with around 600 saddles made. I have used many tree makers over the years and have found Pete's to be the best. He has a great range and the fit is second to none. I recommend them to any saddle maker. I think with Pete also being a saddle maker he knows what we need and makes his trees very easy to build on.",
+      "wide", "From a fellow saddle maker · 23 years, ~600 saddles"),
+    review("Shay", "Peter Brophy saddle owner", "Love my Peter Brophy Saddle. Best saddle I have owned or ridden in. Thanks Peter.", ""),
+    review("Damian", "Stock & wade saddles", "If you want a custom saddle — talk to Pete!",
+      "I've got 2 (a swinging fender stocky and the wade) excellent saddles. The stock is on the Symetry tree and the wade on the \"new mould\" which is carbon fibre re-inforced. Both sit me just where I want to be, great seats and good pockets to hang my legs spot on, as well the bars are open enough to allow the horses shoulders to move freely without creating hot spots.... Very nicely finished off as well... If you want a custom saddle - talk to Pete!"),
+    review("Belinda", "Peter Brophy saddle owner", "The difference the saddle has made to my horses is beyond words.",
+      "A brilliant saddle! Peter's work is of the highest quality and eye to detail is amazing. The difference the saddle has made to my horses is beyond words. The saddle fits them perfectly, they're able to move freely and are happy horses in Peter's saddle! Thank you again Peter!"),
+    review("Kayleen", "Peter Brophy saddle owner", "What an awesome saddle. I'm so lucky to own it :)", ""),
+  ] },
+};
+export const mergeTestimonials = (saved: Partial<TestimonialsContent> | undefined | null) => {
+  const merged = mergeSections(defaultTestimonials, saved);
+  const blank = review("", "", "", "");
+  return { ...merged, reviews: { items: (Array.isArray(merged.reviews.items) ? merged.reviews.items : []).map(r => ({ ...blank, ...r })) } };
 };

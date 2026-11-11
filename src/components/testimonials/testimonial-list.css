@@ -1,0 +1,64 @@
+.tl { padding-block: 72px 88px; background: #f0ece2; }
+.tl figure, .tl blockquote { margin: 0; }
+
+/* Intro */
+.tl-intro { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px 64px; align-items: end; padding-bottom: 44px; border-bottom: 1px solid #d9cfbc; }
+.tl-intro .eyebrow { grid-column: 1 / -1; }
+.tl-intro h2 { font-family: "Times New Roman", Georgia, serif; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.1; color: #15130f; }
+.tl-intro h2 em { display: block; color: #9b7e4a; }
+.tl-intro .body-copy { max-width: 440px; }
+
+/* Shared */
+.tl-mark { display: block; height: 52px; color: #b89a61; font-family: "Times New Roman", Georgia, serif; font-size: 96px; line-height: 1; }
+.tl-signature { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+.tl-monogram { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border: 1px solid #b89a61; border-radius: 50%; color: #9b7e4a; font-family: "Times New Roman", Georgia, serif; font-size: 19px; }
+.tl-signature strong { display: block; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #15130f; }
+.tl-signature small { display: block; margin-top: 3px; font-size: 12px; color: #7a705f; }
+
+/* Featured story */
+.tl-featured { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr); margin-top: 48px; background: #15130f; color: #f0ece2; }
+.tl-featured-lead { display: flex; flex-direction: column; padding: 48px 44px; border-right: 1px solid #b89a6140; background: linear-gradient(160deg, #2a241a, #15130f 70%); }
+.tl-featured-headline { font-family: "Times New Roman", Georgia, serif; font-size: clamp(30px, 3vw, 42px); font-style: italic; line-height: 1.15; }
+.tl-featured-lead .tl-signature { margin-top: auto; padding-top: 32px; }
+.tl-featured-lead .tl-signature strong { color: #f0ece2; }
+.tl-featured-lead .tl-signature small { color: #b89a61; }
+.tl-featured-body { padding: 48px 48px 44px; font-size: 15px; line-height: 1.75; letter-spacing: .015em; color: #d8d0bf; }
+.tl-featured-body p + p { margin-top: 16px; }
+.tl-featured-body p:first-child::first-letter { float: left; margin: 6px 10px 0 0; color: #b89a61; font-family: "Times New Roman", Georgia, serif; font-size: 58px; line-height: .8; }
+
+/* Grid */
+.tl-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: dense; gap: 24px; margin-top: 24px; }
+.tl-card { display: flex; flex-direction: column; padding: 32px 30px 28px; background: #faf7f0; border: 1px solid #e0d7c5; border-top: 2px solid #b89a61; transition: transform .25s ease, box-shadow .25s ease; }
+.tl-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px #15130f14; }
+.tl-card blockquote { flex: 1; }
+.tl-headline { font-family: "Times New Roman", Georgia, serif; font-size: 22px; font-style: italic; line-height: 1.3; color: #15130f; }
+.tl-body { margin-top: 14px; font-size: 14px; line-height: 1.65; color: #514b40; }
+.tl-body + .tl-body { margin-top: 10px; }
+.tl-card .tl-signature { padding-top: 20px; border-top: 1px solid #e6dece; }
+
+.tl-card--short .tl-headline { font-size: 26px; }
+
+.tl-card--maker { grid-column: span 2; background: #221d15; border-color: #3a3123; border-top-color: #b89a61; color: #f0ece2; }
+.tl-card--maker .tl-headline { font-size: clamp(24px, 2.2vw, 30px); color: #f0ece2; }
+.tl-card--maker .tl-body { color: #cfc6b4; max-width: 640px; }
+.tl-card--maker .tl-signature { border-top-color: #3a3123; }
+.tl-card--maker .tl-signature strong { color: #f0ece2; }
+.tl-card--maker .tl-signature small { color: #b89a61; }
+.tl-badge { align-self: flex-start; margin-bottom: 18px; padding: 6px 12px; border: 1px solid #b89a6170; color: #b89a61; font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+
+@media (max-width: 1024px) {
+  .tl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tl-featured { grid-template-columns: 1fr; }
+  .tl-featured-lead { border-right: 0; border-bottom: 1px solid #b89a6140; }
+}
+@media (max-width: 760px) {
+  .tl { padding-block: 44px 56px; }
+  .tl-intro { grid-template-columns: 1fr; padding-bottom: 32px; }
+  .tl-grid { grid-template-columns: 1fr; gap: 16px; }
+  .tl-card--maker { grid-column: auto; }
+  .tl-featured { margin-top: 32px; }
+  .tl-featured-lead, .tl-featured-body { padding: 30px 22px; }
+  .tl-card { padding: 26px 22px 22px; }
+  .tl-headline { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .tl-card:hover { transform: none; } }

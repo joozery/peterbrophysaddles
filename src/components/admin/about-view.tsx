@@ -1,23 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDownIcon, ArrowUpIcon, ExternalLinkIcon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon, PlusIcon } from "@radix-ui/react-icons";
 import { type AboutContent, type LinkItem, defaultAbout, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
-import { Card, PageHeader, useToast } from "./admin-ui";
+import { Card, ListControls, PageHeader, move, useToast } from "./admin-ui";
 import { LinkFields, Text } from "./home-view";
 import { ImageUpload, isImageSrc } from "./image-upload";
 
 type Section = keyof AboutContent;
 
-/** Up / down / remove buttons for an item in an editable list. */
-function ListControls({ index, count, onMove, onRemove, min = 1 }: { index: number; count: number; onMove: (to: number) => void; onRemove: () => void; min?: number }) {
-  return <div className="admin-row-actions">
-    <button type="button" className="admin-icon-button" aria-label="Move up" disabled={index === 0} onClick={() => onMove(index - 1)}><ArrowUpIcon /></button>
-    <button type="button" className="admin-icon-button" aria-label="Move down" disabled={index === count - 1} onClick={() => onMove(index + 1)}><ArrowDownIcon /></button>
-    <button type="button" className="admin-icon-button is-danger" aria-label="Remove" disabled={count <= min} onClick={onRemove}><TrashIcon /></button>
-  </div>;
-}
-const move = <T,>(list: T[], from: number, to: number) => { const next = [...list]; const [item] = next.splice(from, 1); next.splice(to, 0, item); return next; };
 
 function validate(a: AboutContent): string | null {
   const links: [string, LinkItem][] = [["Story link", a.story.link], ["Materials link", a.materials.link], ["Disciplines button", a.disciplines.cta], ["Consultation button", a.consultation.cta]];

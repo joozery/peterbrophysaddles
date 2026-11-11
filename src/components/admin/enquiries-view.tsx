@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { EnvelopeClosedIcon, MobileIcon, PersonIcon, PlusIcon } from "@radix-ui/react-icons";
+import { ArrowRightIcon, EnvelopeClosedIcon, GlobeIcon, MobileIcon, PersonIcon, PlusIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { money } from "@/lib/catalog";
-import { type EnquiryWithReplies, newId, today, updateAdmin, useAdmin } from "@/lib/admin-store";
-import { Badge, ConfirmDelete, Field, FormDrawer, PageHeader, SearchBox, dollarsToCents, str, useToast } from "./admin-ui";
-import { type EnquiryStatus, enquiryStatusLabel, formatDate } from "./sample-data";
+import { type EnquiryWithReplies, loadAdmin, newId, quoteTotal, today, updateAdmin, useAdmin } from "@/lib/admin-store";
+import { Badge, ConfirmDelete, Field, FormDrawer, PageHeader, SearchBox, str, useToast } from "./admin-ui";
+import { type EnquiryStatus, enquiryStatusLabel, formatDate, quoteStatusLabel, quoteTone } from "./sample-data";
 
-const topics = ["Custom saddle", "Saddle fitting", "Tack & leatherwork", "Saddle trees", "General"];
+const topics = ["Custom saddle", "Saddle range & fit", "Tack & leatherwork", "Saddle trees", "General enquiry"];
 const statusFilters: ("all" | EnquiryStatus)[] = ["all", "new", "replied", "quoted", "closed"];
 
 export function EnquiriesView() {
-  const { enquiries, customers } = useAdmin();
+  const { enquiries, customers, orders, quotes } = useAdmin();
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [filter, setFilter] = useState<(typeof statusFilters)[number]>("all");
   const [query, setQuery] = useState("");
@@ -25,9 +26,16 @@ export function EnquiriesView() {
   const selected = enquiries.find(e => e.id === selectedId) ?? list[0];
   const patch = (id: string, change: Partial<EnquiryWithReplies>) => updateAdmin(s => ({ ...s, enquiries: s.enquiries.map(e => e.id === id ? { ...e, ...change } : e) }));
   const isCustomer = selected && customers.some(c => c.email.toLowerCase() === selected.email.toLowerCase());
+  const linkedOrder = selected?.orderId ? orders.find(o => o.id === selected.orderId) : undefined;
+  const enquiryQuotes = selected ? quotes.filter(x => x.enquiryId === selected.id) : [];
+  const newCount = enquiries.filter(e => e.status === "new").length;
+
 
   return <>
-    <PageHeader eyebrow="Customers" title="Enquiries" description="Messages from the contact and custom saddle forms." actions={<button type="button" className="admin-button is-primary" onClick={() => setCreating(true)}><PlusIcon aria-hidden="true" />Log enquiry</button>} />
+    <PageHeader eyebrow="Customers" title="Enquiries" description={`Messages from the website contact form and the custom saddle popup arrive here automatically.${newCount ? ` ${newCount} new.` : ""}`} actions={<>
+      <button type="button" className="admin-button" disabled={refreshing} onClick={async () => { setRefreshing(true); await loadAdmin(true); setRefreshing(false); }}><ReloadIcon aria-hidden="true" />{refreshing ? "Checking…" : "Check for new"}</button>
+      <button type="button" className="admin-button is-primary" onClick={() => setCreating(true)}><PlusIcon aria-hidden="true" />Log enquiry</button>
+    </>} />
     <div className="admin-toolbar is-bare">
       <div className="admin-tabs" role="tablist" aria-label="Filter by status">{statusFilters.map(f => <button key={f} type="button" role="tab" aria-selected={filter === f} onClick={() => setFilter(f)}>{f === "all" ? "All" : enquiryStatusLabel[f]}<span>{f === "all" ? enquiries.length : enquiries.filter(e => e.status === f).length}</span></button>)}</div>
       <SearchBox value={query} onChange={setQuery} label="Search enquiries" />
@@ -36,7 +44,7 @@ export function EnquiriesView() {
       <ul className="admin-inbox-list" aria-label="Enquiries">
         {list.map(e => <li key={e.id}><button type="button" aria-current={e.id === selected?.id || undefined} onClick={() => { setSelectedId(e.id); setReply(""); }}>
           <span className="admin-inbox-row"><strong>{e.name}</strong><small>{formatDate(e.date)}</small></span>
-          <span className="admin-inbox-row"><span>{e.topic}</span><Badge tone={e.status}>{enquiryStatusLabel[e.status]}</Badge></span>
+          <span className="admin-inbox-row"><span>{e.productName ?? e.topic}</span><Badge tone={e.status}>{enquiryStatusLabel[e.status]}</Badge></span>
           <span className="admin-inbox-preview">{e.message}</span>
         </button></li>)}
         {!list.length && <li className="admin-empty">No enquiries here.</li>}
@@ -49,8 +57,22 @@ export function EnquiriesView() {
           {selected.phone && <a href={`tel:${selected.phone.replace(/\s/g, "")}`}><MobileIcon aria-hidden="true" />{selected.phone}</a>}
           {selected.discipline && <span>Discipline: {selected.discipline}</span>}
           {selected.quote ? <span>Quoted: <strong>{money(selected.quote)}</strong></span> : null}
+          {selected.source && <span><GlobeIcon aria-hidden="true" /> {selected.source}</span>}
+          {selected.productName && <span>Saddle: <strong>{selected.productName}</strong></span>}
         </div>
         <p className="admin-message">{selected.message}</p>
+
+        <div className="admin-convert">
+          {linkedOrder ? <><p><strong>Order {linkedOrder.id}</strong> created · {linkedOrder.paid ? "Paid" : "Awaiting payment"}</p><Link className="admin-button is-primary" href={`/admin/orders?open=${encodeURIComponent(linkedOrder.id)}`}>Open order & payment <ArrowRightIcon aria-hidden="true" /></Link></>
+            : <>
+              <div className="admin-convert-quotes">
+                {enquiryQuotes.length ? enquiryQuotes.map(x => <Link key={x.id} href={`/admin/quotes/edit?id=${encodeURIComponent(x.id)}`} className="admin-convert-quote">
+                  <strong>{x.id}</strong><span>{money(quoteTotal(x))}</span><Badge tone={quoteTone[x.status]}>{quoteStatusLabel[x.status]}</Badge>
+                </Link>) : <p>Next step: prepare a quotation for {selected.name.split(" ")[0]}. Once they accept it, it becomes an order and you send the payment link.</p>}
+              </div>
+              <Link className={`admin-button${enquiryQuotes.length ? "" : " is-primary"}`} href={`/admin/quotes/edit?enquiry=${encodeURIComponent(selected.id)}`}><PlusIcon aria-hidden="true" />{enquiryQuotes.length ? "New quotation" : "Create quotation"}</Link>
+            </>}
+        </div>
 
         {!!selected.replies?.length && <div className="admin-thread"><h3>Replies</h3>{selected.replies.map((r, i) => <div key={i} className="admin-thread-item"><small>{formatDate(r.date)}</small><p>{r.text}</p></div>)}</div>}
 
@@ -64,13 +86,6 @@ export function EnquiriesView() {
           </div>
           <div className="admin-actions-row">
             <select className="admin-input admin-input-inline" value={selected.status} aria-label="Enquiry status" onChange={e => run(() => patch(selected.id, { status: e.target.value as EnquiryStatus }), "Status updated.")}>{Object.entries(enquiryStatusLabel).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
-            <form className="admin-quote" onSubmit={e => {
-              e.preventDefault();
-              const input = e.currentTarget.elements.namedItem("quote") as HTMLInputElement;
-              const cents = dollarsToCents(input.value);
-              if (Number.isNaN(cents) || cents <= 0) return run(() => { throw new Error("Enter a quote amount greater than $0."); }, "");
-              run(() => patch(selected.id, { quote: cents, status: "quoted" }), `Quote of ${money(cents)} recorded.`);
-            }}><span aria-hidden="true">$</span><input key={selected.id} name="quote" inputMode="decimal" aria-label="Quote amount in AUD" placeholder="Quote" defaultValue={selected.quote ? (selected.quote / 100).toFixed(2) : ""} /><button type="submit">{selected.quote ? "Update" : "Quote"}</button></form>
             <button type="button" className="admin-button is-primary" disabled={!reply.trim()} onClick={() => run(() => { patch(selected.id, { replies: [...(selected.replies ?? []), { date: today(), text: reply.trim() }], status: selected.status === "new" ? "replied" : selected.status }); setReply(""); }, "Reply saved.")}>Save reply</button>
           </div>
         </div>

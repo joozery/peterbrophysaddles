@@ -45,3 +45,13 @@
 @media (max-width: 800px) { .contact-intro-row { grid-template-columns: 1fr; gap: 22px; } .contact-intro-row > p { justify-self: start; max-width: 480px; } .contact-main { grid-template-columns: 1fr; } .contact-story { min-height: 360px; } .contact-story-copy { min-height: 360px; } .contact-faq { grid-template-columns: 1fr; gap: 28px; padding-block: 42px; } }
 @media (max-width: 480px) { .contact-field-row { grid-template-columns: 1fr; gap: 22px; } .contact-breadcrumb { margin-bottom: 26px; } .contact-form-panel { padding: 26px 20px; } }
 @media (prefers-reduced-motion: reduce) { .contact-question button svg, .contact-form-panel input, .contact-form-panel textarea, .contact-form-panel select { transition: none; } }
+
+/* Sent state + product prefill */
+.contact-sent { display: grid; gap: 14px; justify-items: start; padding-block: 24px; }
+.contact-sent > svg { color: #b89a61; }
+.contact-sent h2 { margin: 0; }
+.contact-sent-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 8px; }
+.contact-sent-again { border: 0; background: none; padding: 0; color: #514b40; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.contact-prefill { margin: -4px 0 0; font-size: 13px; color: #514b40; }
+.contact-form-bottom button:disabled { opacity: .7; cursor: progress; }
+.contact-form-status[role="alert"] { color: #9a3329; }

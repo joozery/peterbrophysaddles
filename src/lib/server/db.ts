@@ -14,11 +14,16 @@ function client(): Promise<MongoClient> {
 async function ensureIndexes(d: Db) {
   await Promise.all([
     d.collection("admins").createIndex({ email: 1 }, { unique: true }),
+    d.collection("admins").createIndex({ id: 1 }),
+    d.collection("orders").createIndex({ stripeSessionId: 1 }, { sparse: true }),
     d.collection("sessions").createIndex({ tokenHash: 1 }, { unique: true }),
     d.collection("sessions").createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     d.collection("login_attempts").createIndex({ at: 1 }, { expireAfterSeconds: 15 * 60 }),
     d.collection("login_attempts").createIndex({ key: 1 }),
-    ...["orders", "enquiries", "customers", "products", "discountCodes"].map(c => d.collection(c).createIndex({ id: 1 }, { unique: true })),
+    d.collection("enquiry_attempts").createIndex({ at: 1 }, { expireAfterSeconds: 60 * 60 }),
+    d.collection("enquiry_attempts").createIndex({ ip: 1 }),
+    d.collection("quotes").createIndex({ token: 1 }, { unique: true }),
+    ...["orders", "enquiries", "customers", "products", "discountCodes", "quotes"].map(c => d.collection(c).createIndex({ id: 1 }, { unique: true })),
     d.collection("pages").createIndex({ slug: 1 }, { unique: true }),
   ]);
 }

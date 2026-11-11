@@ -2,9 +2,9 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { AlertDialog, Dialog } from "radix-ui";
-import { Cross2Icon, MagnifyingGlassIcon, TrashIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon, Cross2Icon, MagnifyingGlassIcon, TrashIcon } from "@radix-ui/react-icons";
 
-export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?: string; title: string; description?: string; actions?: ReactNode }) {
+export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?: ReactNode; title: string; description?: string; actions?: ReactNode }) {
   return <div className="admin-page-header">
     <div>{eyebrow && <p className="admin-eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description && <p className="admin-muted">{description}</p>}</div>
     {actions && <div className="admin-page-actions">{actions}</div>}
@@ -85,3 +85,13 @@ export function useToast() {
 export const str = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
 /** Parse a dollar amount like "3,200.50" into cents; returns NaN when invalid. */
 export const dollarsToCents = (value: string) => { const n = Number(value.replace(/[,$\s]/g, "")); return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : NaN; };
+
+/** Up / down / remove buttons for an item in an editable list. */
+export function ListControls({ index, count, onMove, onRemove, min = 1 }: { index: number; count: number; onMove: (to: number) => void; onRemove: () => void; min?: number }) {
+  return <div className="admin-row-actions">
+    <button type="button" className="admin-icon-button" aria-label="Move up" disabled={index === 0} onClick={() => onMove(index - 1)}><ArrowUpIcon /></button>
+    <button type="button" className="admin-icon-button" aria-label="Move down" disabled={index === count - 1} onClick={() => onMove(index + 1)}><ArrowDownIcon /></button>
+    <button type="button" className="admin-icon-button is-danger" aria-label="Remove" disabled={count <= min} onClick={onRemove}><TrashIcon /></button>
+  </div>;
+}
+export const move = <T,>(list: T[], from: number, to: number) => { const next = [...list]; const [item] = next.splice(from, 1); next.splice(to, 0, item); return next; };

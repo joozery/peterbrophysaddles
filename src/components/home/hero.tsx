@@ -1,9 +1,10 @@
 import { ButtonLink } from "@/components/ui/button-link";
 import { type HomeContent, defaultHome } from "@/lib/admin-types";
-import { Lines, cssUrl } from "./lines";
+import { Lines } from "./lines";
+import { HeroSlides } from "./hero-slides";
 
 export function Hero({ content = defaultHome.hero }: { content?: HomeContent["hero"] }) {
-  return <section id="home" className="hero"><div className="hero-image" style={content.image ? { backgroundImage: cssUrl(content.image) } : undefined} /><div className="hero-shade" /><div className="section-shell relative z-10 py-20 lg:py-28">
+  return <section id="home" className="hero"><HeroSlides images={[content.image, ...(content.slides ?? [])].filter(Boolean)} seconds={content.slideSeconds} /><div className="hero-shade" /><div className="section-shell relative z-10 py-20 lg:py-28">
     <p className="eyebrow text-cream">{content.eyebrow} <span className="ml-5 text-gold" aria-hidden="true">— ✦ —</span></p>
     <h1 className="mt-5 max-w-2xl"><Lines text={content.title} /></h1>
     <p className="hero-description max-w-[34rem]"><Lines text={content.description} /></p>

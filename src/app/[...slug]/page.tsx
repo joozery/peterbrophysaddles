@@ -12,6 +12,7 @@ import { AboutPageContent } from "@/components/about/about-page";
 import { SaddleCollection } from "@/components/home/saddle-collection";
 import { CustomSaddles } from "@/components/home/custom-saddles";
 import { Testimonials } from "@/components/home/testimonials";
+import { TestimonialList } from "@/components/testimonials/testimonial-list";
 import { Contact } from "@/components/home/contact";
 import { ButtonLink } from "@/components/ui/button-link";
 import { getHomeContent } from "@/lib/server/home-content";
@@ -19,6 +20,7 @@ import { getContentPages } from "@/lib/server/page-content";
 import { getAboutContent } from "@/lib/server/about-content";
 import { getPricingContent } from "@/lib/server/pricing-content";
 import { PricingPageContent } from "@/components/pricing/pricing-page";
+import { getTestimonialsContent } from "@/lib/server/testimonials-content";
 
 const pages: Record<string, { title: string; description: string; image?: string }> = {
   "about": { title: "About Peter Brophy", description: "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider." },
@@ -79,7 +81,7 @@ async function PageContent({ params }: Props) {
   const home = await getHomeContent();
   return <>
     <section className="section-shell py-12 sm:py-16"><nav aria-label="Breadcrumb" className="mb-7 flex flex-wrap gap-3 text-xs text-stone-500"><Link href="/">Home</Link><span aria-hidden="true">/</span>{path.startsWith("saddle-range/") && <><Link href="/saddle-range">Saddle Range</Link><span aria-hidden="true">/</span></>}<span aria-current="page">{page.title}</span></nav><p className="eyebrow">Peter Brophy Saddles</p><h1 className="mt-4">{page.title}</h1><p className="body-copy mt-5 max-w-2xl">{page.description}</p></section>
-    {path === "saddle-range" ? <SaddleCollection content={home.collection} /> : path === "custom-saddles" ? <CustomSaddles content={home.custom} /> : path === "testimonials" ? <Testimonials content={home.testimonial} /> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" unoptimized={page.image.startsWith("https://")} /></div><div><h2>Made with purpose</h2><p className="body-copy my-6">Start a conversation about your horse, your riding and the details that matter to you.</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : "/contact"}>{path.startsWith("saddle-range/") ? "View product" : "Enquire now"}</ButtonLink></div></section> : null}
+    {path === "saddle-range" ? <SaddleCollection content={home.collection} /> : path === "custom-saddles" ? <CustomSaddles content={home.custom} /> : path === "testimonials" ? <><Testimonials content={home.testimonial} /><TestimonialList content={await getTestimonialsContent()} /></> : page.image ? <section className="section-shell grid items-center gap-10 pb-16 md:grid-cols-2"><div className="relative aspect-[4/3] overflow-hidden"><Image src={page.image} alt={page.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" unoptimized={page.image.startsWith("https://")} /></div><div><h2>Made with purpose</h2><p className="body-copy my-6">Start a conversation about your horse, your riding and the details that matter to you.</p><ButtonLink href={path.startsWith("saddle-range/") ? `/products/${slug[1]}` : "/contact"}>{path.startsWith("saddle-range/") ? "View product" : "Enquire now"}</ButtonLink></div></section> : null}
     <Contact content={home.contact} />
   </>;
 }

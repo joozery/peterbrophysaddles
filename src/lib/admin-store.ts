@@ -5,13 +5,13 @@
 // what changed, and saves those records to the server. If saving fails, it reloads the server's copy
 // and reports the error through `onSyncError` listeners.
 import { useSyncExternalStore } from "react";
-import { type AdminState, type AdminUser, LIST_KEYS, type ListName, SINGLETONS, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings } from "./admin-types";
+import { type AdminState, type AdminUser, LIST_KEYS, type ListName, SINGLETONS, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, defaultTestimonials } from "./admin-types";
 
 export * from "./admin-types";
 
 type Status = { phase: "idle" | "loading" | "ready" | "signed-out" | "error"; error?: string; user?: AdminUser; saving: number };
 
-const empty: AdminState = { orders: [], enquiries: [], customers: [], products: [], discountCodes: [], pages: [], promotion: defaultPromotion, settings: defaultSettings, home: defaultHome, about: defaultAbout, pricing: defaultPricing };
+const empty: AdminState = { orders: [], enquiries: [], customers: [], products: [], discountCodes: [], pages: [], promotion: defaultPromotion, settings: defaultSettings, home: defaultHome, about: defaultAbout, pricing: defaultPricing, testimonials: defaultTestimonials, quotes: [] };
 let state: AdminState = empty;
 let status: Status = { phase: "idle", saving: 0 };
 const listeners = new Set<() => void>();
@@ -88,4 +88,10 @@ export async function signOut() {
   await api("/api/admin/auth/logout", { method: "POST" }).catch(() => {});
   state = empty;
   setStatus({ phase: "signed-out", user: undefined });
+}
+
+/** Puts a record the server just changed (e.g. after a Stripe call) into the local store without saving it back. */
+export function applyServerOrder(order: AdminState["orders"][number]) {
+  state = { ...state, orders: state.orders.map(o => o.id === order.id ? order : o) };
+  emit();
 }
