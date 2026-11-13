@@ -4,10 +4,10 @@ import { ChatBubbleIcon, CheckCircledIcon, Cross2Icon, PaperPlaneIcon } from "@r
 import Link from "next/link";
 import { Dialog } from "radix-ui";
 import { useState } from "react";
-import { type HomeContent, defaultHome } from "@/lib/admin-types";
+import { DEFAULT_BUSINESS_NAME, type HomeContent, defaultHome } from "@/lib/admin-types";
 import { HONEYPOT_STYLE, sendEnquiry } from "@/lib/send-enquiry";
 
-export function Contact({ content = defaultHome.contact }: { content?: HomeContent["contact"] }) {
+export function Contact({ content = defaultHome.contact, brand = DEFAULT_BUSINESS_NAME }: { content?: HomeContent["contact"]; brand?: string }) {
   const [startedAt, setStartedAt] = useState(0);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -18,7 +18,7 @@ export function Contact({ content = defaultHome.contact }: { content?: HomeConte
       {sent ? <div className="grid justify-items-start gap-4" role="status">
         <CheckCircledIcon aria-hidden="true" width={32} height={32} className="text-gold" />
         <Dialog.Title className="font-serif text-3xl uppercase">Thank you</Dialog.Title>
-        <Dialog.Description className="text-sm leading-6 text-stone-600">Your enquiry has been sent to Peter Brophy Saddles. We’ll be in touch by email soon.</Dialog.Description>
+        <Dialog.Description className="text-sm leading-6 text-stone-600">Your enquiry has been sent to {brand}. We’ll be in touch by email soon.</Dialog.Description>
         <Dialog.Close className="button-link button-gold">Close</Dialog.Close>
       </div> : <>
         <Dialog.Title className="font-serif text-3xl uppercase">Your custom saddle</Dialog.Title><Dialog.Description className="mt-3 text-sm leading-6 text-stone-600">Tell us a little about you and your horse, and we’ll get back to you by email.</Dialog.Description>

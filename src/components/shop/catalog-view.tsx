@@ -9,7 +9,7 @@ import { categoryOf, money, productCategories, productPhoto, type Product } from
 export function PurchasePanel({ product }: { product: Product }) {
   return <div className="grid gap-4">{product.custom ? <p className="body-copy">Made to order. Fit, materials and pricing are agreed individually.</p> : <p className="text-xl">{money(product.price)} <small className="text-xs text-stone-500">sample price</small></p>}<Link href={`/contact?product=${encodeURIComponent(product.id)}`} className="button-link button-gold justify-center">Enquire Now</Link></div>;
 }
-export function CatalogView({ products }: { products: Product[] }) {
+export function CatalogView({ products, brand }: { products: Product[]; brand: string }) {
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("featured");
   const visible = products.filter(product => filter === "all" || categoryOf(product) === filter);
@@ -18,7 +18,7 @@ export function CatalogView({ products }: { products: Product[] }) {
 
   return <div className="shop-catalog section-shell">
     <nav className="shop-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><ChevronRightIcon aria-hidden="true" /><span aria-current="page">Shop</span></nav>
-    <header className="shop-intro"><div><p className="eyebrow">The Peter Brophy collection</p><h1>Crafted for your ride.</h1></div><p>Traditional craftsmanship, thoughtful details and a saddle for every discipline. Find your next riding companion.</p></header>
+    <header className="shop-intro"><div><p className="eyebrow">The {brand} collection</p><h1>Crafted for your ride.</h1></div><p>Traditional craftsmanship, thoughtful details and a saddle for every discipline. Find your next riding companion.</p></header>
     <p className="shop-demo-note">Every saddle is confirmed with you first — enquire and we’ll prepare a quotation.</p>
     <div className="shop-toolbar"><div className="shop-filters" role="group" aria-label="Filter saddles">{[["all", "All products"], ...productCategories.map(c => [c.id, c.label])].map(([value, label]) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div><div className="shop-sort"><span>{visible.length} {visible.length === 1 ? "product" : "products"}</span><label><span className="sr-only">Sort saddles</span><select value={sort} onChange={event => setSort(event.target.value)}><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label></div></div>
     <div className="shop-grid shop-catalog-grid">{visible.map(product => {

@@ -4,13 +4,15 @@ import Link from "next/link";
 import { ArrowRightIcon, ArchiveIcon, ChatBubbleIcon, ReaderIcon, CheckCircledIcon } from "@radix-ui/react-icons";
 import { money } from "@/lib/catalog";
 import { useAdmin } from "@/lib/admin-store";
+import { DEFAULT_BUSINESS_NAME } from "@/lib/admin-types";
 import { Badge, Card, PageHeader, StatCard } from "./admin-ui";
 import { enquiryStatusLabel, formatDate, orderStatusLabel, orderTotal } from "./sample-data";
 
 const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; };
 
 export function DashboardView() {
-  const { orders, enquiries, products } = useAdmin();
+  const { orders, enquiries, products, settings } = useAdmin();
+  const brand = settings.businessName || DEFAULT_BUSINESS_NAME;
   const active = orders.filter(o => o.status !== "cancelled");
   const revenue = active.filter(o => o.paid).reduce((sum, o) => sum + orderTotal(o), 0);
   const inProgress = orders.filter(o => o.status === "pending" || o.status === "in-production").length;
@@ -25,7 +27,7 @@ export function DashboardView() {
   return <div className="admin-dashboard">
     <PageHeader eyebrow="Your workshop, at a glance" title={greeting()} description="Here's what's happening in the workshop." actions={<><Link href="/" className="admin-button">Visit website <ArrowRightIcon /></Link><Link href="/admin/enquiries" className="admin-button is-primary"><ChatBubbleIcon /> Open enquiries</Link></>} />
     <section className="admin-welcome">
-      <div><span className="admin-welcome-label"><span /> PETER BROPHY SADDLES · WORKSHOP</span><h2>A little overview.<br /><em>A clear way forward.</em></h2><p>Every great saddle starts with a conversation.<br />Keep your enquiries, orders and collection in hand.</p><Link href="/admin/enquiries">Manage your enquiries <ArrowRightIcon /></Link></div>
+      <div><span className="admin-welcome-label"><span /> {brand.toUpperCase()} · WORKSHOP</span><h2>A little overview.<br /><em>A clear way forward.</em></h2><p>Every great saddle starts with a conversation.<br />Keep your enquiries, orders and collection in hand.</p><Link href="/admin/enquiries">Manage your enquiries <ArrowRightIcon /></Link></div>
       <div className="admin-focus"><span className="admin-focus-icon"><ChatBubbleIcon /></span><p>WAITING FOR YOUR REPLY</p><strong>{newEnquiries.toString().padStart(2, "0")}</strong><span>{newEnquiries === 1 ? "new enquiry" : "new enquiries"}</span><Link href="/admin/enquiries">Go to inbox <ArrowRightIcon /></Link></div>
     </section>
     <div className="admin-stats">
@@ -56,6 +58,6 @@ export function DashboardView() {
       return <div key={step} className={`admin-production-step step-${index}`}><div><span className="admin-step-number">0{index + 1}</span><strong>{count}</strong></div><p>{orderStatusLabel[step]}</p><div className="admin-production-track"><span style={{ width: `${trackedOrders ? count / trackedOrders * 100 : 0}%` }} /></div></div>;
     })}</div></section>
     <div className="admin-quick-links">{[{ href: "/admin/products", icon: ArchiveIcon, title: "Your collection", copy: "Manage saddles & stock" }, { href: "/admin/enquiries", icon: ChatBubbleIcon, title: "Conversations", copy: "Reply, quote & follow up" }, { href: "/admin/orders", icon: ReaderIcon, title: "Workshop orders", copy: "Keep every order on track" }].map(({ href, icon: Icon, title, copy }) => <Link href={href} key={href}><span className="admin-quick-icon"><Icon /></span><div><strong>{title}</strong><small>{copy}</small></div><ArrowRightIcon /></Link>)}</div>
-    <footer className="admin-dashboard-footer"><span>Peter Brophy Saddles</span><span>Made with care. Managed with ease.</span></footer>
+    <footer className="admin-dashboard-footer"><span>{brand}</span><span>Made with care. Managed with ease.</span></footer>
   </div>;
 }

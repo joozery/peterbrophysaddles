@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Switch } from "radix-ui";
 import { type Settings, api, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
+import { SOCIAL_LINKS } from "@/lib/admin-types";
 import { Card, Field, PageHeader, useToast } from "./admin-ui";
 
 const toggles: { key: "notifyOrders" | "notifyEnquiries" | "showPrices"; label: string }[] = [
@@ -48,7 +49,10 @@ export function SettingsView() {
   const save = () => {
     if (!s.businessName.trim()) return notify("Business name is required.");
     if (s.email && !/^\S+@\S+\.\S+$/.test(s.email)) return notify("Enter a valid contact email.");
-    run(() => { updateAdmin(state => ({ ...state, settings: { ...s, businessName: s.businessName.trim(), email: s.email.trim() } })); setDraft(null); }, "Settings saved.");
+    const social = Object.fromEntries(SOCIAL_LINKS.map(({ key }) => [key, (s[key] ?? "").trim()]));
+    const bad = SOCIAL_LINKS.find(({ key, host }) => social[key] && !host.test(social[key]));
+    if (bad) return notify(`${bad.label} link must look like ${bad.example}`);
+    run(() => { updateAdmin(state => ({ ...state, settings: { ...s, ...social, businessName: s.businessName.trim(), email: s.email.trim() } })); setDraft(null); }, "Settings saved.");
   };
 
   return <>
@@ -60,7 +64,7 @@ export function SettingsView() {
     <div className="admin-grid-2 is-even">
       <Card title="Business details">
         <fieldset className="admin-form admin-fieldset" disabled={!canEdit}>
-          <Field label="Business name"><input className="admin-input" value={s.businessName} onChange={e => set("businessName", e.target.value)} /></Field>
+          <Field label="Business name" hint="Shown as the site name everywhere: header, footer, page titles, emails and quotes."><input className="admin-input" value={s.businessName} onChange={e => set("businessName", e.target.value)} /></Field>
           <Field label="Contact email"><input className="admin-input" type="email" placeholder="hello@example.com" value={s.email} onChange={e => set("email", e.target.value)} /></Field>
           <Field label="Phone"><input className="admin-input" type="tel" placeholder="04xx xxx xxx" value={s.phone} onChange={e => set("phone", e.target.value)} /></Field>
           <Field label="Workshop address"><textarea className="admin-input" rows={3} placeholder="Street, town, state, postcode" value={s.address} onChange={e => set("address", e.target.value)} /></Field>
@@ -70,6 +74,12 @@ export function SettingsView() {
         <Card title="Notifications & display">
           <ul className="admin-toggles">{toggles.map(t => <li key={t.key}><label htmlFor={t.key}>{t.label}</label><Switch.Root id={t.key} className="admin-switch" checked={s[t.key]} disabled={!canEdit} onCheckedChange={v => set(t.key, v)}><Switch.Thumb className="admin-switch-thumb" /></Switch.Root></li>)}</ul>
           <p className="admin-hint">Email notifications start working once email sending is connected.</p>
+        </Card>
+        <Card title="Social media">
+          <fieldset className="admin-form admin-fieldset" disabled={!canEdit}>
+            {SOCIAL_LINKS.map(({ key, label, example }) => <Field key={key} label={label}><input className="admin-input" type="url" inputMode="url" placeholder={example} value={s[key] ?? ""} onChange={e => set(key, e.target.value)} /></Field>)}
+          </fieldset>
+          <p className="admin-hint">Shown as icons in the website footer. Leave a field blank to hide that icon. The Facebook link is also used by the Saddle Pricing page button.</p>
         </Card>
         <PasswordCard />
       </div>

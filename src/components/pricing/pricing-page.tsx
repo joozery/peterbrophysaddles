@@ -7,9 +7,9 @@ import { Lines, Paragraphs, Title } from "@/components/home/lines";
 import "./pricing-page.css";
 
 // Text and images come from Admin → Pricing page (MongoDB).
-export function PricingPageContent({ content = defaultPricing }: { content?: PricingContent }) {
+export function PricingPageContent({ content = defaultPricing, facebookUrl = "" }: { content?: PricingContent; /** From Admin → Settings, used when the page has no link of its own. */ facebookUrl?: string }) {
   const { intro, main, facebook } = content;
-  const fbUrl = /^https:\/\/(www\.|m\.)?facebook\.com\//.test(facebook.url) ? facebook.url : "";
+  const fbUrl = [facebook.url, facebookUrl].find(u => /^https:\/\/([\w-]+\.)?facebook\.com\//.test(u ?? "")) ?? "";
   return <div className="pricing-page">
     <section className="section-shell pricing-intro">
       <nav className="pricing-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><ChevronRightIcon aria-hidden="true" /><Link href="/about">About</Link><ChevronRightIcon aria-hidden="true" /><span aria-current="page">{intro.title}</span></nav>

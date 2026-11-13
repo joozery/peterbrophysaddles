@@ -8,6 +8,7 @@ import { money } from "@/lib/catalog";
 import { DEFAULT_QUOTE_TERMS, type OrderWithNote, type Quote, type QuoteItem, newId, quoteTotal, today, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
 import { Badge, Card, ConfirmDelete, Field, PageHeader, dollarsToCents, move, useToast } from "./admin-ui";
 import { quoteStatusLabel, quoteTone } from "./sample-data";
+import { DEFAULT_BUSINESS_NAME } from "@/lib/admin-types";
 
 const addDays = (iso: string, days: number) => { const d = new Date(`${iso}T00:00:00`); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10); };
 const token = () => { const b = new Uint8Array(24); crypto.getRandomValues(b); return btoa(String.fromCharCode(...b)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
@@ -82,8 +83,8 @@ export function QuoteEditor() {
     const first = q.customer.split(" ")[0] || q.customer;
     const body = [`Hi ${first},`, "", `Thank you for your enquiry. Please find your quotation ${q.id}${q.title ? ` for ${q.title}` : ""} here:`, link, "",
       `Total: ${money(total)} (AUD)${q.validUntil ? ` — valid until ${new Date(`${q.validUntil}T00:00:00`).toLocaleDateString("en-AU")}` : ""}.`, "",
-      "You can accept it online from that page, or simply reply to this email. Once accepted we’ll send your payment details.", "", "Kind regards,", settings.businessName || "Peter Brophy Saddles"].join("\n");
-    return `mailto:${encodeURIComponent(q.email)}?subject=${encodeURIComponent(`Quotation ${q.id} — ${settings.businessName || "Peter Brophy Saddles"}`)}&body=${encodeURIComponent(body)}`;
+      "You can accept it online from that page, or simply reply to this email. Once accepted we’ll send your payment details.", "", "Kind regards,", settings.businessName || DEFAULT_BUSINESS_NAME].join("\n");
+    return `mailto:${encodeURIComponent(q.email)}?subject=${encodeURIComponent(`Quotation ${q.id} — ${settings.businessName || DEFAULT_BUSINESS_NAME}`)}&body=${encodeURIComponent(body)}`;
   };
 
   function convertToOrder() {

@@ -6,6 +6,7 @@ import { ArrowLeftIcon, ArrowRightIcon, EyeOpenIcon, EyeClosedIcon, LockClosedIc
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api, resetAdminSession } from "@/lib/admin-store";
+import { DEFAULT_BUSINESS_NAME } from "@/lib/admin-types";
 
 /** Admin sign-in. Accounts are created by an owner in Admin users, or with `npm run admin:create` on the server. */
 export function AuthForm() {
@@ -27,17 +28,17 @@ export function AuthForm() {
   }
 
   return <main className="admin-auth admin-auth-split">
-    <section className="admin-auth-visual" aria-label="Peter Brophy Saddles workshop">
+    <section className="admin-auth-visual" aria-label={`${DEFAULT_BUSINESS_NAME} workshop`}>
       <Image src="/images/admin/login-workshop-v1.webp" alt="Handcrafted leather saddle in a warmly lit saddlery workshop" fill sizes="(max-width: 760px) 100vw, 50vw" preload className="admin-auth-photo" />
       <div className="admin-auth-shade" />
-      <Link href="/" className="admin-auth-brand"><Image src="/logo/logo-white.svg" alt="Peter Brophy Saddles" width={2067} height={761} unoptimized /></Link>
+      <Link href="/" className="admin-auth-brand"><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2067} height={761} unoptimized /></Link>
       <div className="admin-auth-story"><p className="admin-auth-kicker">THE ART OF THE RIDE</p><h2>Crafted with care.<br /><em>Managed with ease.</em></h2><p>A place for your collection, your customers,<br />and every conversation in between.</p><div className="admin-auth-story-rule" /><span>AUSTRALIAN CRAFTSMANSHIP · TIMELESS QUALITY</span></div>
     </section>
     <section className="admin-auth-panel" aria-labelledby="admin-signin-title">
       <header className="admin-auth-panel-top"><Link href="/"><ArrowLeftIcon aria-hidden="true" /> Back to website</Link><span>ADMIN WORKSPACE</span></header>
       <div className="admin-auth-card">
         <span className="admin-auth-lock"><LockClosedIcon aria-hidden="true" /></span>
-        <p className="admin-auth-kicker">PETER BROPHY SADDLES</p>
+        <p className="admin-auth-kicker">{DEFAULT_BUSINESS_NAME.toUpperCase()}</p>
         <h1 id="admin-signin-title">Welcome back.</h1>
         <p className="admin-auth-sub">Your workshop, all in one place.<br />Sign in to pick up where you left off.</p>
         <form onSubmit={submit} className="admin-form" aria-busy={busy}>
@@ -50,7 +51,7 @@ export function AuthForm() {
         </form>
         <div className="admin-auth-help"><strong>Need a hand signing in?</strong><p>Ask your account owner to reset your password.</p></div>
       </div>
-      <footer className="admin-auth-panel-foot"><span>Peter Brophy Saddles</span><span><LockClosedIcon aria-hidden="true" /> Authorised access only</span></footer>
+      <footer className="admin-auth-panel-foot"><span>{DEFAULT_BUSINESS_NAME}</span><span><LockClosedIcon aria-hidden="true" /> Authorised access only</span></footer>
     </section>
   </main>;
 }

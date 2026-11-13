@@ -1,6 +1,7 @@
 import "server-only";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { db } from "./db";
+import { getSettings } from "./admin-data";
 
 /**
  * Stripe connection settings. Stored in MongoDB (config/_id "payments"), NOT in the shared admin state,
@@ -89,7 +90,7 @@ export async function createPaymentLink(key: string, order: OrderDoc, amount: nu
     metadata: { orderId: order.id },
     payment_intent_data: { metadata: { orderId: order.id }, description: `${description} — ${order.customer}` },
     restrictions: { completed_sessions: { limit: 1 } }, // one payment per link, so it can't be paid twice
-    after_completion: { type: "hosted_confirmation", hosted_confirmation: { custom_message: `Thank you — your payment for ${description} has been received. Peter Brophy Saddles will be in touch.` } },
+    after_completion: { type: "hosted_confirmation", hosted_confirmation: { custom_message: `Thank you — your payment for ${description} has been received. ${(await getSettings()).businessName} will be in touch.` } },
   }, `link-${ref}`);
   return { id: link.id, url: link.url, amount, description, status: "open", createdAt: new Date().toISOString(), createdBy: by };
 }

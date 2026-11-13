@@ -4,11 +4,16 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/home/site-header";
 import { SiteFooter } from "@/components/home/site-footer";
 import "./privacy.css";
+import { BrandName } from "@/components/home/brand-name";
+import { getBrandName } from "@/lib/server/site-settings";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Peter Brophy Saddles",
-  description: "How Peter Brophy Saddles collects, uses and protects your personal information.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrandName();
+  return {
+    title: `Privacy Policy | ${brand}`,
+    description: `How ${brand} collects, uses and protects your personal information.`,
+  };
+}
 
 // ── Owner: fill these in before launch ─────────────────────────────────────────
 // Leave PRIVACY_EMAIL empty to point people to the Contact page instead.
@@ -41,7 +46,7 @@ export default function PrivacyPage() {
     <Suspense fallback={<div className="h-[77px] bg-ink" />}><SiteHeader /></Suspense>
     <main className="privacy">
       <header className="privacy-hero"><div className="section-shell">
-        <p className="eyebrow">Peter Brophy Saddles</p>
+        <p className="eyebrow"><BrandName /></p>
         <h1>Privacy Policy</h1>
         <p className="privacy-lede">We respect your privacy. This policy explains what personal information we collect when you visit our website or talk to us about a saddle, why we collect it, and how you can access or correct it.</p>
         <p className="privacy-updated">Last updated {LAST_UPDATED}</p>
@@ -56,7 +61,7 @@ export default function PrivacyPage() {
         <article className="privacy-body">
           <section id="who-we-are">
             <h2>Who we are</h2>
-            <p>Peter Brophy Saddles (“we”, “us”, “our”) is an Australian maker of custom saddles and leatherwork. We handle personal information in line with the <em>Privacy Act 1988</em> (Cth) and the Australian Privacy Principles.</p>
+            <p><BrandName /> (“we”, “us”, “our”) is an Australian maker of custom saddles and leatherwork. We handle personal information in line with the <em>Privacy Act 1988</em> (Cth) and the Australian Privacy Principles.</p>
           </section>
 
           <section id="what-we-collect">

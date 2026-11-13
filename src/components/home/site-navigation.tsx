@@ -37,6 +37,8 @@ export function buildNavigation(products: Product[]): NavigationItem[] {
 
 export const navigation = mainNavigation.map(({ label, href }) => [label, href]);
 
-export function Brand() {
-  return <Link href="/" aria-label="Peter Brophy Saddles home" className="brand"><span>PETER BROPHY</span><small>SADDLES</small></Link>;
+/** Text logo: first two words large, the rest small (e.g. PETER BROPHY / SADDLES AND TREES). Name comes from Admin → Settings. */
+export function Brand({ name }: { name: string }) {
+  const words = name.toUpperCase().split(/\s+/);
+  return <Link href="/" aria-label={`${name} home`} className="brand"><span>{words.slice(0, 2).join(" ")}</span>{words.length > 2 && <small>{words.slice(2).join(" ")}</small>}</Link>;
 }

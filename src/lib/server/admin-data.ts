@@ -1,6 +1,6 @@
 import "server-only";
 import { products as catalog } from "@/lib/catalog";
-import { type AdminState, LIST_KEYS, type ListName, SINGLETONS, type SingletonName, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, defaultTestimonials, mergeAbout, mergeHome, mergePricing, mergeTestimonials, seedPages, seedProducts } from "@/lib/admin-types";
+import { type AdminState, LIST_KEYS, type ListName, SINGLETONS, type SingletonName, defaultAbout, defaultHome, defaultPricing, defaultPromotion, defaultSettings, defaultTestimonials, DEFAULT_BUSINESS_NAME, mergeAbout, mergeHome, mergePricing, mergeTestimonials, seedPages, seedProducts } from "@/lib/admin-types";
 import type { Role } from "./auth";
 import { db } from "./db";
 import { validatePageContent } from "@/lib/validate-page-content";
@@ -54,13 +54,41 @@ async function runSeed() {
       { $set: { description: p.description ?? "", specs: p.specs ?? [] } },
     )),
   ]);
-  if (await meta.findOne({ _id: "seeded" })) { await seedConfig(); return; }
+  if (await meta.findOne({ _id: "seeded" })) { await seedConfig(); await renameBrand(); return; }
   if (!(await d.collection("products").countDocuments())) await d.collection("products").insertMany(seedProducts());
   if (!(await d.collection("pages").countDocuments())) await d.collection("pages").insertMany(seedPages());
   await d.collection("config").updateOne({ _id: "promotion" as never }, { $setOnInsert: { value: defaultPromotion } }, { upsert: true });
   await d.collection("config").updateOne({ _id: "settings" as never }, { $setOnInsert: { value: defaultSettings } }, { upsert: true });
   await seedConfig();
   await meta.updateOne({ _id: "seeded" }, { $setOnInsert: { at: new Date() } }, { upsert: true });
+  await renameBrand();
+}
+
+/** One-off: "Peter Brophy Saddles" → "Peter Brophy Saddles and Trees" in saved settings and page text. Runs once per database. */
+const OLD_BRAND = /Peter Brophy Saddles(?! and Trees)/g;
+function renameDeep<T>(v: T): T {
+  if (typeof v === "string") return v.replace(OLD_BRAND, DEFAULT_BUSINESS_NAME) as T;
+  if (Array.isArray(v)) return v.map(renameDeep) as T;
+  if (v && typeof v === "object" && !(v instanceof Date) && v.constructor === Object) return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, renameDeep(x)])) as T;
+  return v;
+}
+async function renameBrand() {
+  const d = await db();
+  const meta = d.collection<{ _id: string; at: Date }>("meta");
+  if (await meta.findOne({ _id: "brand-renamed-v1" })) return;
+  const config = d.collection<{ _id: string; value: unknown }>("config");
+  for (const doc of await config.find({ _id: { $in: ["settings", "home", "about", "pricing", "testimonials", "promotion"] } }).toArray()) {
+    const value = renameDeep(doc.value);
+    if (JSON.stringify(value) !== JSON.stringify(doc.value)) await config.updateOne({ _id: doc._id }, { $set: { value } });
+  }
+  for (const name of ["pages", "products"]) {
+    for (const doc of await d.collection(name).find({}).toArray()) {
+      const { _id, ...rest } = doc;
+      const next = renameDeep(rest);
+      if (JSON.stringify(next) !== JSON.stringify(rest)) await d.collection(name).replaceOne({ _id }, next);
+    }
+  }
+  await meta.updateOne({ _id: "brand-renamed-v1" }, { $setOnInsert: { at: new Date() } }, { upsert: true });
 }
 
 export async function loadState(): Promise<AdminState> {
@@ -80,6 +108,12 @@ export async function loadState(): Promise<AdminState> {
   ]);
   const single = <T,>(name: SingletonName, fallback: T) => ({ ...fallback, ...(config.find(c => c._id === name)?.value as T | undefined) });
   return { orders, enquiries, customers, products, discountCodes, pages, quotes, promotion: single("promotion", defaultPromotion), settings: single("settings", defaultSettings), home: mergeHome(config.find(c => c._id === "home")?.value as Partial<AdminState["home"]> | undefined), about: mergeAbout(config.find(c => c._id === "about")?.value as Partial<AdminState["about"]> | undefined), pricing: mergePricing(config.find(c => c._id === "pricing")?.value as Partial<AdminState["pricing"]> | undefined), testimonials: mergeTestimonials(config.find(c => c._id === "testimonials")?.value as Partial<AdminState["testimonials"]> | undefined) };
+}
+
+export async function getSettings() {
+  await seedIfEmpty();
+  const doc = await (await db()).collection<{ _id: string; value: unknown }>("config").findOne({ _id: "settings" });
+  return { ...defaultSettings, ...(doc?.value as object | undefined) } as AdminState["settings"];
 }
 
 export async function getPromotion() {

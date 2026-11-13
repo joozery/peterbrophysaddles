@@ -68,8 +68,7 @@ export function PricingView() {
         <div className="admin-form">
           <div className="admin-form-row"><Text label="Title" value={p.facebook.title} onChange={v => set("facebook", { title: v })} /><Text label="Button text" value={p.facebook.buttonLabel} onChange={v => set("facebook", { buttonLabel: v })} /></div>
           <Text label="Text" value={p.facebook.text} onChange={v => set("facebook", { text: v })} />
-          <Text label="Facebook page link" value={p.facebook.url} onChange={v => set("facebook", { url: v.trim() })} hint="e.g. https://www.facebook.com/your-page — the button only appears once this is filled in." />
-          {!p.facebook.url && <p className="admin-hint is-warn">No Facebook link yet — the button is hidden on the website.</p>}
+          <Text label="Facebook page link" value={p.facebook.url} onChange={v => set("facebook", { url: v.trim() })} hint="Leave blank to use the Facebook link from Settings → Social media." />
         </div>
       </Card>
 

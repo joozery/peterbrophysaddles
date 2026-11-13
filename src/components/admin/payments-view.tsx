@@ -19,7 +19,7 @@ function BankDetailsCard() {
   return <Card title="Direct bank transfer">
     <div className="admin-form">
       <Field label="Bank details for customers" hint="Added to payment emails so customers can choose card (Stripe) or bank transfer.">
-        <textarea className="admin-input" rows={4} placeholder={"Account name: Peter Brophy Saddles\nBSB: 000-000\nAccount: 00000000\nReference: your invoice number"} value={value} onChange={e => setDraft(e.target.value)} />
+        <textarea className="admin-input" rows={4} placeholder={"Account name: Peter Brophy Saddles and Trees\nBSB: 000-000\nAccount: 00000000\nReference: your invoice number"} value={value} onChange={e => setDraft(e.target.value)} />
       </Field>
       <div className="admin-actions-row"><button type="button" className="admin-button is-primary" disabled={draft === null} onClick={() => run(() => { updateAdmin(s => ({ ...s, settings: { ...s.settings, bankDetails: value.trim() } })); setDraft(null); }, "Bank details saved.")}>Save bank details</button></div>
     </div>

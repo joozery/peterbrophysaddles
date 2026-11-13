@@ -7,7 +7,9 @@ export type AdminProduct = { id: string; name: string; image: string; price: num
 export type DiscountCode = { id: string; code: string; type: "percent" | "fixed"; value: number; active: boolean; expires: string; uses: number };
 export type Promotion = { enabled: boolean; eyebrow: string; highlight: string; title: string; description: string; ctaLabel: string; ctaHref: string; image: string; terms: string; delaySeconds: number };
 export type ContentPage = { slug: string; title: string; description: string; image: string; published: boolean; updatedAt: string; content?: Record<string, string> };
-export type Settings = { businessName: string; email: string; phone: string; address: string; /** Shown in payment emails, e.g. account name, BSB, account number. */ bankDetails: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean };
+export type Settings = { businessName: string; email: string; phone: string; address: string; /** Shown in payment emails, e.g. account name, BSB, account number. */ bankDetails: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean;
+  /** Social media links shown in the site footer (blank = hidden). */
+  facebookUrl: string; instagramUrl: string; youtubeUrl: string; tiktokUrl: string };
 export type AdminRole = "owner" | "admin" | "staff";
 export type AdminUser = { id: string; name: string; email: string; role: AdminRole; active: boolean; invitedAt: string; lastActive: string };
 export type OrderWithNote = AdminOrder & { note?: string };
@@ -89,7 +91,19 @@ export const defaultPromotion: Promotion = {
   terms: "Preview promotion · Offer subject to confirmation. No discount is applied at checkout.", delaySeconds: 1.5,
 };
 
-export const defaultSettings: Settings = { businessName: "Peter Brophy Saddles", email: "", phone: "", address: "", bankDetails: "", notifyOrders: true, notifyEnquiries: true, showPrices: true };
+/** Brand name shown across the site; editable in Admin → Settings → Business name. */
+export const DEFAULT_BUSINESS_NAME = "Peter Brophy Saddles and Trees";
+export const defaultSettings: Settings = { businessName: DEFAULT_BUSINESS_NAME, email: "", phone: "", address: "", bankDetails: "", notifyOrders: true, notifyEnquiries: true, showPrices: true,
+  facebookUrl: "https://www.facebook.com/share/1517WoSYLTS/?mibextid=wwXIfr", instagramUrl: "", youtubeUrl: "", tiktokUrl: "" };
+
+/** Social networks editable in Admin → Settings; `host` is what a valid link must point at. */
+export const SOCIAL_LINKS = [
+  { key: "facebookUrl", label: "Facebook", host: /^https:\/\/([\w-]+\.)?(facebook\.com|fb\.com|fb\.me)\/\S*$/i, example: "https://www.facebook.com/your-page" },
+  { key: "instagramUrl", label: "Instagram", host: /^https:\/\/(www\.)?instagram\.com\/\S*$/i, example: "https://www.instagram.com/your-name" },
+  { key: "youtubeUrl", label: "YouTube", host: /^https:\/\/((www|m)\.)?(youtube\.com|youtu\.be)\/\S*$/i, example: "https://www.youtube.com/@your-channel" },
+  { key: "tiktokUrl", label: "TikTok", host: /^https:\/\/(www\.)?tiktok\.com\/\S*$/i, example: "https://www.tiktok.com/@your-name" },
+] as const satisfies readonly { key: keyof Settings; label: string; host: RegExp; example: string }[];
+export type SocialKey = (typeof SOCIAL_LINKS)[number]["key"];
 
 export const seedProducts = (): AdminProduct[] => catalog.map((p, i) => ({ category: categoryOf(p), sort: (i + 1) * 10, id: p.id, name: p.name, image: p.photo ?? (p.image ? `/images/${p.image}.webp` : ""), gallery: p.gallery ?? [], price: p.price, custom: !!p.custom, active: true, description: p.description ?? "", specs: p.specs ?? [], stock: p.stock }));
 
@@ -106,14 +120,14 @@ export const seedPages = (): ContentPage[] => [
   ["tack", "Tack", "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates.", "/asset/Tackleatherwork.png"],
   ["leather-work", "Leather work", "Carefully crafted leatherwork with attention to materials, strength and the finer details.", "/asset/Tackleatherwork.png"],
   ["quality-materials", "Quality Materials", "Carefully selected leathers and hardware for strength, beauty and long-lasting performance.", "/asset/Qualitymaterials.png"],
-  ["testimonials", "Testimonials", "Experience Peter Brophy Saddles through the words of our riders.", ""],
+  ["testimonials", "Testimonials", "Experience Peter Brophy Saddles and Trees through the words of our riders.", ""],
   ["contact", "Contact Us", "Let’s create something special. Prepare an enquiry about your horse, riding discipline and saddle requirements.", ""],
 ].map(([slug, title, description, image]) => ({ slug, title, description, image, published: true, updatedAt: "2026-11-01" }));
 
 /** Seed: the home page content as originally built. */
 export const defaultHome: HomeContent = {
   hero: {
-    eyebrow: "Peter Brophy Saddles",
+    eyebrow: "Peter Brophy Saddles and Trees",
     title: "Custom saddles\nfor a higher\nstandard",
     description: "Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider.",
     image: "/cover/hero.png",
@@ -125,7 +139,7 @@ export const defaultHome: HomeContent = {
   heritage: {
     eyebrow: "Our heritage",
     title: "Traditional\ncraftsmanship.\nModern performance.",
-    body: "With over 20 years of experience, Peter Brophy Saddles creates custom saddles and premium leatherwork designed for comfort, balance and long-term performance.",
+    body: "With over 20 years of experience, Peter Brophy Saddles and Trees creates custom saddles and premium leatherwork designed for comfort, balance and long-term performance.",
     image: "/cover/right.png",
     backgroundImage: "/cover/left.png",
     link: { label: "Our story", href: "/about" },
@@ -231,7 +245,7 @@ export const defaultAbout: AboutContent = {
     eyebrow: "The tradition continues",
     title: "Rooted in heritage.",
     accent: "Made for the ride ahead.",
-    body: "Today, Peter Brophy Saddles continues to produce quality saddles and tack with the heritage and tradition the business was founded on. Stylish designs and a commitment to improvement keep that story moving forward, one saddle at a time.",
+    body: "Today, Peter Brophy Saddles and Trees continues to produce quality saddles and tack with the heritage and tradition the business was founded on. Stylish designs and a commitment to improvement keep that story moving forward, one saddle at a time.",
   },
   consultation: {
     eyebrow: "Your next saddle starts here",
@@ -255,7 +269,7 @@ function mergeSections<T extends object>(defaults: T, saved: Partial<T> | undefi
 export const mergeAbout = (saved: Partial<AboutContent> | undefined | null) => mergeSections(defaultAbout, saved);
 export const mergePricing = (saved: Partial<PricingContent> | undefined | null) => mergeSections(defaultPricing, saved);
 
-/** Seed: Saddle Pricing page (text supplied by Peter Brophy Saddles). Facebook URL is set in the admin. */
+/** Seed: Saddle Pricing page (text supplied by Peter Brophy Saddles and Trees). Facebook URL is set in the admin. */
 export const defaultPricing: PricingContent = {
   intro: { eyebrow: "About · Saddle pricing", title: "Saddle Pricing", accent: "A lifetime investment." },
   main: {
@@ -275,7 +289,7 @@ export const defaultPricing: PricingContent = {
 
 const review = (name: string, tag: string, headline: string, body: string, layout: ReviewLayout = "standard", badge = ""): Review => ({ name, tag, headline, body, badge, layout, visible: true });
 
-/** Seed: Testimonials page (reviews supplied by Peter Brophy Saddles). */
+/** Seed: Testimonials page (reviews supplied by Peter Brophy Saddles and Trees). */
 export const defaultTestimonials: TestimonialsContent = {
   intro: {
     eyebrow: "In their words",

@@ -6,6 +6,7 @@ import { money } from "@/lib/catalog";
 import { type OrderWithNote, api, applyServerOrder, useAdmin } from "@/lib/admin-store";
 import { Badge, Field, dollarsToCents } from "./admin-ui";
 import { type PaymentLink, orderTotal } from "./sample-data";
+import { DEFAULT_BUSINESS_NAME } from "@/lib/admin-types";
 
 const tone: Record<PaymentLink["status"], [string, string]> = { open: ["pending", "Awaiting payment"], paid: ["paid", "Paid"], cancelled: ["cancelled", "Cancelled"] };
 const dollars = (cents: number) => (cents / 100).toFixed(2);
@@ -76,7 +77,7 @@ export function PaymentLinks({ order }: { order: OrderWithNote }) {
         <div className="admin-paylink-url"><code>{l.url}</code></div>
         <div className="admin-actions-row is-wrap">
           <button type="button" className="admin-button" onClick={() => copy(l.url)}>{copied === l.url ? <CheckCircledIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />}{copied === l.url ? "Copied" : "Copy link"}</button>
-          <a className="admin-button is-primary" href={emailHref(order, l, settings.businessName || "Peter Brophy Saddles", settings.bankDetails)}><EnvelopeClosedIcon aria-hidden="true" />Email customer</a>
+          <a className="admin-button is-primary" href={emailHref(order, l, settings.businessName || DEFAULT_BUSINESS_NAME, settings.bankDetails)}><EnvelopeClosedIcon aria-hidden="true" />Email customer</a>
           <a className="admin-button" href={l.url} target="_blank" rel="noreferrer"><ExternalLinkIcon aria-hidden="true" />Open</a>
           <button type="button" className="admin-button" disabled={!!busy} onClick={() => call("PATCH", { linkId: l.id, action: "check" }, "check", "Checked with Stripe.")}><ReloadIcon aria-hidden="true" />{busy === "check" ? "Checking…" : "Check payment"}</button>
           <button type="button" className="admin-button is-danger" disabled={!!busy} onClick={() => call("PATCH", { linkId: l.id, action: "cancel" }, "cancel", "Link cancelled — it can no longer be paid.")}>Cancel link</button>

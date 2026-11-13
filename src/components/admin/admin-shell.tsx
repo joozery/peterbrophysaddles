@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Dialog, DropdownMenu } from "radix-ui";
 import { ArchiveIcon, CardStackIcon, ClipboardIcon, ChatBubbleIcon, Cross2Icon, DashboardIcon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, HomeIcon, IdCardIcon, LockClosedIcon, PersonIcon, QuoteIcon, ReaderIcon, StarIcon, TokensIcon } from "@radix-ui/react-icons";
+import { DEFAULT_BUSINESS_NAME } from "@/lib/admin-types";
 import { type AdminRole, loadAdmin, onSyncError, signOut, useAdminStatus } from "@/lib/admin-store";
 
 const links: { href: string; label: string; icon: typeof DashboardIcon; roles?: AdminRole[] }[] = [
@@ -30,7 +31,7 @@ const roleLabel: Record<AdminRole, string> = { owner: "Owner", admin: "Admin", s
 function SidebarContent({ onNavigate, role }: { onNavigate?: () => void; role?: AdminRole }) {
   const path = usePathname();
   return <>
-    <Link href="/admin" className="admin-brand" onClick={onNavigate}><Image src="/logo/logo-white.svg" alt="Peter Brophy Saddles" width={2067} height={761} unoptimized /><span>Admin</span></Link>
+    <Link href="/admin" className="admin-brand" onClick={onNavigate}><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2067} height={761} unoptimized /><span>Admin</span></Link>
     <p className="admin-nav-caption">WORKSPACE</p>
     <nav aria-label="Admin navigation" className="admin-nav">
       {links.filter(l => !l.roles || (role && l.roles.includes(role))).map(({ href, label, icon: Icon }) => {

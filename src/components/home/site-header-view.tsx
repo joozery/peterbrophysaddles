@@ -15,7 +15,7 @@ const isActive = (path: string, href: string) => path === href || (href !== "/" 
 const sectionActive = (path: string, item: NavigationItem) => isActive(path, item.href) || !!item.children?.some(child => isActive(path, child.href));
 
 /** Header UI. Menu items come from the server (see SiteHeader) so saddle links and photos follow the admin. */
-export function SiteHeaderView({ navigation }: { navigation: NavigationItem[] }) {
+export function SiteHeaderView({ navigation, brand }: { navigation: NavigationItem[]; brand: string }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const active = usePathname();
@@ -28,7 +28,7 @@ export function SiteHeaderView({ navigation }: { navigation: NavigationItem[] })
   }, []);
 
   return <header className="site-header" data-scrolled={scrolled || undefined}><div className="header-inner">
-    <Link href="/" className="header-brand" aria-label="Peter Brophy Saddles home"><Image src="/logo/logo-white.svg" alt="Peter Brophy Saddles" width={2067} height={761} className="header-logo" unoptimized /></Link>
+    <Link href="/" className="header-brand" aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2067} height={761} className="header-logo" unoptimized /></Link>
 
     <NavigationMenu.Root aria-label="Main navigation" className="primary-nav" delayDuration={80}>
       <NavigationMenu.List className="primary-nav-list">
@@ -59,7 +59,7 @@ export function SiteHeaderView({ navigation }: { navigation: NavigationItem[] })
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger className="mobile-menu" aria-label="Open navigation"><span /><span /><span /></Dialog.Trigger>
         <Dialog.Portal><Dialog.Overlay className="mobile-navigation-overlay" /><Dialog.Content className="mobile-panel mobile-navigation-panel">
-          <div className="mobile-navigation-heading"><Link href="/" onClick={() => setOpen(false)} aria-label="Peter Brophy Saddles home"><Image src="/logo/logo-white.svg" alt="Peter Brophy Saddles" width={2067} height={761} className="mobile-navigation-logo" unoptimized /></Link><Dialog.Title className="sr-only">Navigation</Dialog.Title><Dialog.Close aria-label="Close navigation" className="mobile-navigation-close"><Cross2Icon aria-hidden="true" width={18} height={18} /></Dialog.Close></div>
+          <div className="mobile-navigation-heading"><Link href="/" onClick={() => setOpen(false)} aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2067} height={761} className="mobile-navigation-logo" unoptimized /></Link><Dialog.Title className="sr-only">Navigation</Dialog.Title><Dialog.Close aria-label="Close navigation" className="mobile-navigation-close"><Cross2Icon aria-hidden="true" width={18} height={18} /></Dialog.Close></div>
           <Dialog.Description className="mobile-navigation-caption">Australian craftsmanship</Dialog.Description>
           <nav aria-label="Mobile navigation" className="mobile-links">{navigation.map(item => <Collapsible.Root key={item.label}>
             <div className="mobile-nav-row"><Link aria-current={isActive(active, item.href) ? "location" : undefined} href={item.href} onClick={() => setOpen(false)}>{item.label}{!item.children && <ChevronRightIcon aria-hidden="true" />}</Link>
@@ -67,7 +67,7 @@ export function SiteHeaderView({ navigation }: { navigation: NavigationItem[] })
             </div>
             {item.children && <Collapsible.Content className="mobile-submenu navbar-mobile-submenu">{item.children.map(child => <Link key={child.label} href={child.href} aria-current={active === child.href ? "page" : undefined} onClick={() => setOpen(false)}>{child.label}</Link>)}</Collapsible.Content>}
           </Collapsible.Root>)}</nav>
-          <div className="mobile-navigation-footer"><p>A saddle made for your story.</p><Link href="/contact" onClick={() => setOpen(false)}><ChatBubbleIcon aria-hidden="true" /> Get in touch <ChevronRightIcon aria-hidden="true" /></Link><span>Peter Brophy Saddles · Handcrafted with care</span></div>
+          <div className="mobile-navigation-footer"><p>A saddle made for your story.</p><Link href="/contact" onClick={() => setOpen(false)}><ChatBubbleIcon aria-hidden="true" /> Get in touch <ChevronRightIcon aria-hidden="true" /></Link><span>{brand} · Handcrafted with care</span></div>
         </Dialog.Content></Dialog.Portal>
       </Dialog.Root>
     </div>
