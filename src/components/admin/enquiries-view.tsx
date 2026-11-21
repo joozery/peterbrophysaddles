@@ -8,7 +8,7 @@ import { type EnquiryWithReplies, loadAdmin, newId, quoteTotal, today, updateAdm
 import { Badge, ConfirmDelete, Field, FormDrawer, PageHeader, SearchBox, str, useToast } from "./admin-ui";
 import { type EnquiryStatus, enquiryStatusLabel, formatDate, quoteStatusLabel, quoteTone } from "./sample-data";
 
-const topics = ["Custom saddle", "Saddle range & fit", "Tack & leatherwork", "Saddle trees", "General enquiry"];
+const topics = ["Custom saddle", "Saddle tree", "Tack & leatherwork", "General enquiry"];
 const statusFilters: ("all" | EnquiryStatus)[] = ["all", "new", "replied", "quoted", "closed"];
 
 export function EnquiriesView() {

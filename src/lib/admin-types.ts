@@ -112,7 +112,7 @@ export const sortProducts = <T extends { category?: string; sort?: number }>(lis
   (categoryOf(a) === categoryOf(b) ? 0 : categoryOf(a) === "saddles" ? -1 : 1) || (a.sort ?? 9999) - (b.sort ?? 9999));
 
 export const seedPages = (): ContentPage[] => [
-  ["about", "About Peter Brophy", "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider.", ""],
+  ["about", "About Peter Brophy", "Traditional craftsmanship. Modern performance. Australian-made custom saddles and precision saddle trees, crafted with 36 years of experience and a deep understanding of horses, riders and saddlers.", ""],
   ["saddle-range", "Saddle Range", "Saddles for every discipline. Explore our range and discuss the right saddle for you and your horse.", ""],
   ["custom-saddles", "Custom Saddles", "Built around you and your horse. Discuss fit, style, materials and the finer details of your custom saddle.", ""],
   ["saddle-pricing", "Saddle Pricing", "Enquire about pricing for your chosen saddle, materials and custom details.", ""],
@@ -121,7 +121,7 @@ export const seedPages = (): ContentPage[] => [
   ["leather-work", "Leather work", "Carefully crafted leatherwork with attention to materials, strength and the finer details.", "/asset/Tackleatherwork.png"],
   ["quality-materials", "Quality Materials", "Carefully selected leathers and hardware for strength, beauty and long-lasting performance.", "/asset/Qualitymaterials.png"],
   ["testimonials", "Testimonials", "Experience Peter Brophy Saddles and Trees through the words of our riders.", ""],
-  ["contact", "Contact Us", "Let’s create something special. Prepare an enquiry about your horse, riding discipline and saddle requirements.", ""],
+  ["contact", "Contact Us", "Let’s create something special. Prepare an enquiry with details about your horse, riding discipline, custom saddle build, or saddle tree requirements for your workshop.", ""],
 ].map(([slug, title, description, image]) => ({ slug, title, description, image, published: true, updatedAt: "2026-11-01" }));
 
 /** Seed: the home page content as originally built. */
@@ -129,7 +129,7 @@ export const defaultHome: HomeContent = {
   hero: {
     eyebrow: "Peter Brophy Saddles and Trees",
     title: "Custom saddles\nfor a higher\nstandard",
-    description: "Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider.",
+    description: "Australian-made custom saddles and precision saddle trees, crafted with 36 years of experience and a deep understanding of horses, riders and saddlers.",
     image: "/cover/hero.png",
     slides: [],
     slideSeconds: 6,
@@ -138,8 +138,8 @@ export const defaultHome: HomeContent = {
   },
   heritage: {
     eyebrow: "Our heritage",
-    title: "Traditional\ncraftsmanship.\nModern performance.",
-    body: "With over 20 years of experience, Peter Brophy Saddles and Trees creates custom saddles and premium leatherwork designed for comfort, balance and long-term performance.",
+    title: "Built from\nthe inside out.",
+    body: "Established in 1991, Peter Brophy Saddles and Trees brings over three decades of experience to Australian saddlery—handcrafting bespoke custom saddles for riders and precision-engineered saddle trees for fellow saddlers across Australia and beyond.",
     image: "/cover/right.png",
     backgroundImage: "/cover/left.png",
     link: { label: "Our story", href: "/about" },
@@ -156,11 +156,11 @@ export const defaultHome: HomeContent = {
     ].map(([name, image, slug]) => ({ name, image: `/images/saddles/${image}-v2.png`, href: `/saddle-range/${slug}` })),
   },
   custom: {
-    eyebrow: "Custom saddles",
-    title: "Built around\nyou and your horse",
-    body: "Every horse and rider are different. Our custom saddles are made to fit, perform and last — with careful attention to saddle fit, style, materials and the finer details.",
+    eyebrow: "Custom saddles & saddle trees",
+    title: "Built from\nthe tree up",
+    body: "Every horse, rider, and workshop has unique demands. From precision-engineered saddle trees built for fellow saddlers to custom-fitted saddles crafted from start to finish, every piece is made for fit, strength, and lasting performance.",
     image: "/cover/bane.png",
-    cta: { label: "Enquire about a custom saddle", href: "/contact" },
+    cta: { label: "Start your enquiry", href: "/contact" },
   },
   services: {
     items: [
@@ -198,7 +198,7 @@ export const defaultAbout: AboutContent = {
     eyebrow: "Our story · Our craft",
     title: "The saddle specialist.",
     accent: "Through and through.",
-    text: "More than twenty years of experience. A lifelong respect for the craft. Saddles made with horse and rider in mind.",
+    text: "Over 36 years of saddlery expertise. A lifelong dedication to the craft. Custom saddles and trees engineered for performance and fit.",
     linkLabel: "Discover our story",
   },
   story: {

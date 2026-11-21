@@ -161,7 +161,7 @@ export const pageContentDefaults: Record<string, Record<string, string>> = {
     "placeholder_e_g_campdraft_reining": "e.g. Campdraft, reining",
     "text_i_m_interested_in": "I’m interested in",
     "text_custom_saddle": "Custom saddle",
-    "text_saddle_range_fit": "Saddle range & fit",
+    "text_saddle_range_fit": "Saddle tree",
     "text_tack_leatherwork": "Tack & leatherwork",
     "text_general_enquiry": "General enquiry",
     "text_saddle": "Saddle:",

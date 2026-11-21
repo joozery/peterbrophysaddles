@@ -4,7 +4,7 @@ import { readJson, sameOrigin } from "@/lib/server/auth";
 import { db } from "@/lib/server/db";
 import { products } from "@/lib/catalog";
 
-const TOPICS = ["Custom saddle", "Saddle range & fit", "Tack & leatherwork", "General enquiry"];
+const TOPICS = ["Custom saddle", "Saddle tree", "Tack & leatherwork", "General enquiry"];
 const MAX_PER_HOUR = 5;
 const text = (v: unknown, max: number) => typeof v === "string" ? v.replace(/\s+$/g, "").trim().slice(0, max) : "";
 const json = (status: number, body: object) => NextResponse.json(body, { status, headers: { "cache-control": "no-store" } });

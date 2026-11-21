@@ -29,10 +29,10 @@ import { pageContentDefaults } from "@/lib/page-content-defaults";
 import { getBrandName, getSiteSettings } from "@/lib/server/site-settings";
 
 const pages: Record<string, { title: string; description: string; image?: string }> = {
-  "about": { title: "About Peter Brophy", description: "Traditional craftsmanship. Modern performance. Australian-made saddles and leatherwork, crafted with experience, precision and a deep understanding of horse and rider." },
+  "about": { title: "About Peter Brophy", description: "Traditional craftsmanship. Modern performance. Australian-made custom saddles and precision saddle trees, crafted with 36 years of experience and a deep understanding of horses, riders and saddlers." },
   "saddle-range": { title: "Saddle Range", description: "Saddles for every discipline. Explore our range and discuss the right saddle for you and your horse." },
   "custom-saddles": { title: "Custom Saddles", description: "Built around you and your horse. Discuss fit, style, materials and the finer details of your custom saddle." },
-  "contact": { title: "Contact Us", description: "Let’s create something special. Prepare an enquiry about your horse, riding discipline and saddle requirements." },
+  "contact": { title: "Contact Us", description: "Let’s create something special. Prepare an enquiry with details about your horse, riding discipline, custom saddle build, or saddle tree requirements for your workshop." },
   "saddle-pricing": { title: "Saddle Pricing", description: "Enquire about pricing for your chosen saddle, materials and custom details. Published prices are not available yet." },
   "saddle-trees": { title: "Saddle Trees", description: "The foundation of a great saddle. Discuss tree selection and fit options for your horse.", image: "/asset/Saddletrees.png" },
   "tack": { title: "Tack", description: "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates.", image: "/asset/Tackleatherwork.png" },

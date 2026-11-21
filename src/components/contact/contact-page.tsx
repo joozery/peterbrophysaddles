@@ -6,14 +6,14 @@ import Link from "next/link";
 import { Accordion } from "radix-ui";
 import { CheckCircledIcon, ChevronRightIcon, PaperPlaneIcon, PlusIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "next/navigation";
-import { products } from "@/lib/catalog";
+import { categoryOf, products } from "@/lib/catalog";
 import { HONEYPOT_STYLE, sendEnquiry } from "@/lib/send-enquiry";
 import { useState } from "react";
 import "./contact-page.css";
 
 const productTopic = (id: string | null) => {
   const product = products.find(p => p.id === id);
-  return product ? { product, topic: product.custom ? "Custom saddle" : "Saddle range & fit", message: `Hi, I’m interested in the ${product.name}.\n\n` } : null;
+  return product ? { product, topic: categoryOf(product) === "saddle-trees" ? "Saddle tree" : product.custom ? "Custom saddle" : "General enquiry", message: `Hi, I’m interested in the ${product.name}.\n\n` } : null;
 };
 
 export function ContactPageContent({ title, description, image, content = {} }: { title: string; description: string; image?: string; content?: Record<string, string> }) {
@@ -67,7 +67,7 @@ export function ContactPageContent({ title, description, image, content = {} }: 
           <div style={HONEYPOT_STYLE} aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
           <div className="contact-field-row"><label>{copy.text_your_name}<span>*</span><input name="name" required maxLength={100} autoComplete="name" placeholder={copy.placeholder_full_name} /></label><label>{copy.text_email_address}<span>*</span><input name="email" required type="email" maxLength={200} autoComplete="email" placeholder={copy.placeholder_you_example_com} /></label></div>
           <div className="contact-field-row"><label>{copy.text_phone}<small>{copy.text_optional}</small><input name="phone" type="tel" maxLength={40} autoComplete="tel" placeholder={copy.placeholder_04xx_xxx_xxx} /></label><label>{copy.text_riding_discipline}<small>{copy.text_optional}</small><input name="discipline" maxLength={80} placeholder={copy.placeholder_e_g_campdraft_reining} /></label></div>
-          <label>{copy.text_i_m_interested_in}<select name="topic" defaultValue={prefill?.topic ?? "Custom saddle"}><option value="Custom saddle">{copy.text_custom_saddle}</option><option value="Saddle range &amp; fit">{copy.text_saddle_range_fit}</option><option value="Tack &amp; leatherwork">{copy.text_tack_leatherwork}</option><option value="General enquiry">{copy.text_general_enquiry}</option></select></label>
+          <label>{copy.text_i_m_interested_in}<select name="topic" defaultValue={prefill?.topic ?? "Custom saddle"}><option value="Custom saddle">{copy.text_custom_saddle}</option><option value="Saddle tree">{copy.text_saddle_range_fit}</option><option value="Tack &amp; leatherwork">{copy.text_tack_leatherwork}</option><option value="General enquiry">{copy.text_general_enquiry}</option></select></label>
           {prefill && <p className="contact-prefill">{copy.text_saddle}{" "}<strong>{prefill.product.name}</strong></p>}
           <label>{copy.text_your_message}<span>*</span><textarea name="message" required maxLength={5000} rows={5} defaultValue={prefill?.message} placeholder={copy.placeholder_tell_us_about_your_horse_your_riding_and_the_saddle_y} /></label>
           <div className="contact-form-bottom"><button type="submit" className="button-link button-gold" disabled={sending}>{sending ? copy.text_sending : copy.text_send_enquiry}<PaperPlaneIcon aria-hidden="true" /></button><p>{copy.text_we_reply_personally_to_every_enquiry}</p></div>
