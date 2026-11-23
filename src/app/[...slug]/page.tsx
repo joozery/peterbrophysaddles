@@ -26,6 +26,8 @@ import { categoryOf } from "@/lib/catalog";
 import { LeatherPageContent } from "@/components/leather/leather-page";
 import { TackPageContent } from "@/components/leather/tack-page";
 import { pageContentDefaults } from "@/lib/page-content-defaults";
+import { JsonLd } from "@/components/seo/json-ld";
+import { productJsonLd } from "@/lib/seo";
 import { getBrandName, getSiteSettings } from "@/lib/server/site-settings";
 
 const pages: Record<string, { title: string; description: string; image?: string }> = {
@@ -69,7 +71,11 @@ async function productPage(path: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = await resolvePage(slug.join("/"));
-  return page ? { title: `${page.title} | ${await getBrandName()}`, description: page.description } : {};
+  if (!page) return {};
+  const brand = await getBrandName();
+  const title = `${page.title} | ${brand}`;
+  const url = `/${slug.join("/")}`;
+  return { title, description: page.description, alternates: { canonical: url }, openGraph: { type: "website", locale: "en_AU", url, siteName: brand, title, description: page.description, ...(page.image ? { images: [{ url: page.image, alt: page.title }] } : {}) }, twitter: { card: "summary_large_image", title, description: page.description, ...(page.image ? { images: [page.image] } : {}) } };
 }
 function PagePlaceholder() {
   return <div className="section-shell py-16" role="status" aria-label="Loading page"><div className="h-3 w-40 rounded bg-stone-300/50" /><div className="mt-6 h-12 w-3/4 rounded bg-stone-300/50" /><div className="mt-6 h-4 max-w-xl rounded bg-stone-300/50" /><div className="mt-3 h-4 max-w-md rounded bg-stone-300/50" /><span className="sr-only">Loading page…</span></div>;
@@ -93,7 +99,7 @@ async function PageContent({ params }: Props) {
     const products = await getSiteProducts();
     const product = products.find(product => product.id === slug[1]);
     if (!product) notFound();
-    return <SaddleDetail product={product} products={products} />;
+    return <><JsonLd data={productJsonLd(product, await getBrandName())} /><SaddleDetail product={product} products={products} /></>;
   }
   const [home, brand] = await Promise.all([getHomeContent(), getBrandName()]);
   const copy = { ...pageContentDefaults["quality-materials"], ...page.content };

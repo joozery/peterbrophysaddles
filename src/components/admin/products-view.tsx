@@ -123,7 +123,7 @@ export function ProductsView() {
         <label className="admin-check"><input type="checkbox" name="custom" defaultChecked={current?.custom} />Made to order (price on quote)</label>
         <ImageUpload label="Main photo" name="image" folder="products" defaultValue={current?.image ?? ""} onBusyChange={setUploading} />
         <GalleryEditor initial={current?.gallery ?? []} onBusyChange={setUploading} />
-        <Field label="Description"><textarea name="description" className="admin-input" rows={5} defaultValue={current?.description} placeholder="Leather, tooling, how it rides…" /></Field>
+        <Field label="Description"><textarea name="description" className="admin-input" rows={3} defaultValue={current?.description} placeholder="Leather, tooling, how it rides…" /></Field>
         <SpecsEditor initial={current?.specs ?? []} />
         <label className="admin-check"><input type="checkbox" name="active" defaultChecked={current ? current.active : true} />Visible on the website</label>
       </div>

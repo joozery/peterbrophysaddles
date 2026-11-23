@@ -164,9 +164,9 @@ export const defaultHome: HomeContent = {
   },
   services: {
     items: [
-      { title: "Saddle trees", body: "From foundation of a great saddle. Learn about our saddle trees, fit options and how we select the right tree for your horse.", image: "/asset/Saddletrees.png", link: { label: "Learn more", href: "/saddle-trees" } },
-      { title: "Tack & leatherwork", body: "From headstalls to breastplates, we create premium tack and leatherwork to complement your saddle.", image: "/asset/Tackleatherwork.png", link: { label: "Explore tack", href: "/tack" } },
-      { title: "Quality materials", body: "We use carefully selected leathers and hardware to ensure strength, beauty and long-lasting performance.", image: "/asset/Qualitymaterials.png", link: { label: "Our approach", href: "/quality-materials" } },
+      { title: "Saddle trees", body: "Designed with precision and built for endurance, we craft high-quality custom saddle trees that provide the perfect fit and foundation for both horse and rider, trusted by saddlers nationwide.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/7f75ac3f-b869-49bd-a161-d375f3529fe1.jpg", link: { label: "Learn more", href: "/saddle-trees" } },
+      { title: "Bridles & leatherwork", body: "Custom leatherwork made to complement your rig, using hand-selected bridle and harness leathers. Crafted for durability, style, and daily performance in the arena or on the trail.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/0d4c8732-8ff9-4aba-b820-73054828f31f.jpg", link: { label: "Explore tack", href: "/tack" } },
+      { title: "Hardware", body: "Featuring high-quality buckles, conchos, and robust fittings chosen for strength and timeless style. Our dedicated hardware range is coming soon.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/330c7fc0-c088-4692-bedf-6e0496b4fe8c.jpg", link: { label: "Our approach", href: "/quality-materials" } },
     ],
   },
   testimonial: {
@@ -228,7 +228,7 @@ export const defaultAbout: AboutContent = {
     title: "Leather. Hardware.",
     accent: "And a craftsman’s eye.",
     body: "Saddles and tack from Peter Brophy Saddles and Trees are made from fine leathers selected for the work ahead. Quality hardware, silver trim and considered finishes complement the leatherwork, bringing the whole saddle together.\n\nEach saddle is built with the same care that has defined Peter Brophy Saddles and Trees products from the beginning. The result is a collection grounded in tradition, with an eye on evolving design and the needs of today’s riders.",
-    link: { label: "Explore our materials", href: "/quality-materials" },
+    link: { label: "", href: "/quality-materials" },
     image: "/images/quality-materials.webp",
     imageAlt: "Leather and materials used in saddlery",
     caption: "Chosen with purpose. Finished with care.",
