@@ -31,7 +31,7 @@ export function AuthForm() {
     <section className="admin-auth-visual" aria-label={`${DEFAULT_BUSINESS_NAME} workshop`}>
       <Image src="/images/admin/login-workshop-v1.webp" alt="Handcrafted leather saddle in a warmly lit saddlery workshop" fill sizes="(max-width: 760px) 100vw, 50vw" preload className="admin-auth-photo" />
       <div className="admin-auth-shade" />
-      <Link href="/" className="admin-auth-brand"><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2067} height={761} unoptimized /></Link>
+      <Link href="/" className="admin-auth-brand"><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2480} height={761} unoptimized /></Link>
       <div className="admin-auth-story"><p className="admin-auth-kicker">THE ART OF THE RIDE</p><h2>Crafted with care.<br /><em>Managed with ease.</em></h2><p>A place for your collection, your customers,<br />and every conversation in between.</p><div className="admin-auth-story-rule" /><span>AUSTRALIAN CRAFTSMANSHIP · TIMELESS QUALITY</span></div>
     </section>
     <section className="admin-auth-panel" aria-labelledby="admin-signin-title">

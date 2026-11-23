@@ -227,7 +227,7 @@ export const defaultAbout: AboutContent = {
     eyebrow: "Built on the finer details",
     title: "Leather. Hardware.",
     accent: "And a craftsman’s eye.",
-    body: "Peter Brophy saddles and tack are made from fine leathers selected for the work ahead. Quality hardware, silver trim and considered finishes complement the leatherwork, bringing the whole saddle together.\n\nEach saddle is built with the same care that has defined Peter Brophy products from the beginning. The result is a collection grounded in tradition, with an eye on evolving design and the needs of today’s riders.",
+    body: "Saddles and tack from Peter Brophy Saddles and Trees are made from fine leathers selected for the work ahead. Quality hardware, silver trim and considered finishes complement the leatherwork, bringing the whole saddle together.\n\nEach saddle is built with the same care that has defined Peter Brophy Saddles and Trees products from the beginning. The result is a collection grounded in tradition, with an eye on evolving design and the needs of today’s riders.",
     link: { label: "Explore our materials", href: "/quality-materials" },
     image: "/images/quality-materials.webp",
     imageAlt: "Leather and materials used in saddlery",
@@ -273,7 +273,7 @@ export const mergePricing = (saved: Partial<PricingContent> | undefined | null) 
 export const defaultPricing: PricingContent = {
   intro: { eyebrow: "About · Saddle pricing", title: "Saddle Pricing", accent: "A lifetime investment." },
   main: {
-    body: "A Peter Brophy saddle is a lifetime investment. Hand crafted with the finest raw products, these saddles are made specifically to suit you as a rider. Many hours of blood, sweat and tears goes into creating each of these pieces and our prices reflect the level of commitment and work that goes into each one.",
+    body: "A saddle from Peter Brophy Saddles and Trees is a lifetime investment. Hand crafted with the finest raw products, these saddles are made specifically to suit you as a rider. Many hours of blood, sweat and tears goes into creating each of these pieces and our prices reflect the level of commitment and work that goes into each one.",
     image: "/images/craftsmanship.webp",
     imageAlt: "Craftsman hand-tooling a floral pattern into saddle leather",
     caption: "Hand crafted. Made to suit you.",
@@ -310,12 +310,12 @@ export const defaultTestimonials: TestimonialsContent = {
     review("Dan", "Dan Baker Custom Saddles", "I have used many tree makers over the years and have found Pete's to be the best.",
       "I'm Dan from Dan Baker Custom Saddles. I have been making saddles now for 23 years with around 600 saddles made. I have used many tree makers over the years and have found Pete's to be the best. He has a great range and the fit is second to none. I recommend them to any saddle maker. I think with Pete also being a saddle maker he knows what we need and makes his trees very easy to build on.",
       "wide", "From a fellow saddle maker · 23 years, ~600 saddles"),
-    review("Shay", "Peter Brophy saddle owner", "Love my Peter Brophy Saddle. Best saddle I have owned or ridden in. Thanks Peter.", ""),
+    review("Shay", "Peter Brophy Saddles and Trees customer", "Love my saddle from Peter Brophy Saddles and Trees. Best saddle I have owned or ridden in. Thanks Peter.", ""),
     review("Damian", "Stock & wade saddles", "If you want a custom saddle — talk to Pete!",
       "I've got 2 (a swinging fender stocky and the wade) excellent saddles. The stock is on the Symetry tree and the wade on the \"new mould\" which is carbon fibre re-inforced. Both sit me just where I want to be, great seats and good pockets to hang my legs spot on, as well the bars are open enough to allow the horses shoulders to move freely without creating hot spots.... Very nicely finished off as well... If you want a custom saddle - talk to Pete!"),
-    review("Belinda", "Peter Brophy saddle owner", "The difference the saddle has made to my horses is beyond words.",
+    review("Belinda", "Peter Brophy Saddles and Trees customer", "The difference the saddle has made to my horses is beyond words.",
       "A brilliant saddle! Peter's work is of the highest quality and eye to detail is amazing. The difference the saddle has made to my horses is beyond words. The saddle fits them perfectly, they're able to move freely and are happy horses in Peter's saddle! Thank you again Peter!"),
-    review("Kayleen", "Peter Brophy saddle owner", "What an awesome saddle. I'm so lucky to own it :)", ""),
+    review("Kayleen", "Peter Brophy Saddles and Trees customer", "What an awesome saddle. I'm so lucky to own it :)", ""),
   ] },
 };
 export const mergeTestimonials = (saved: Partial<TestimonialsContent> | undefined | null) => {

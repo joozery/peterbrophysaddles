@@ -28,7 +28,7 @@ export function SiteHeaderView({ navigation, brand }: { navigation: NavigationIt
   }, []);
 
   return <header className="site-header" data-scrolled={scrolled || undefined}><div className="header-inner">
-    <Link href="/" className="header-brand" aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2067} height={761} className="header-logo" unoptimized /></Link>
+    <Link href="/" className="header-brand" aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2480} height={761} className="header-logo" unoptimized /></Link>
 
     <NavigationMenu.Root aria-label="Main navigation" className="primary-nav" delayDuration={80}>
       <NavigationMenu.List className="primary-nav-list">
@@ -59,7 +59,7 @@ export function SiteHeaderView({ navigation, brand }: { navigation: NavigationIt
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger className="mobile-menu" aria-label="Open navigation"><span /><span /><span /></Dialog.Trigger>
         <Dialog.Portal><Dialog.Overlay className="mobile-navigation-overlay" /><Dialog.Content className="mobile-panel mobile-navigation-panel">
-          <div className="mobile-navigation-heading"><Link href="/" onClick={() => setOpen(false)} aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2067} height={761} className="mobile-navigation-logo" unoptimized /></Link><Dialog.Title className="sr-only">Navigation</Dialog.Title><Dialog.Close aria-label="Close navigation" className="mobile-navigation-close"><Cross2Icon aria-hidden="true" width={18} height={18} /></Dialog.Close></div>
+          <div className="mobile-navigation-heading"><Link href="/" onClick={() => setOpen(false)} aria-label={`${brand} home`}><Image src="/logo/logo-white.svg" alt={brand} width={2480} height={761} className="mobile-navigation-logo" unoptimized /></Link><Dialog.Title className="sr-only">Navigation</Dialog.Title><Dialog.Close aria-label="Close navigation" className="mobile-navigation-close"><Cross2Icon aria-hidden="true" width={18} height={18} /></Dialog.Close></div>
           <Dialog.Description className="mobile-navigation-caption">Australian craftsmanship</Dialog.Description>
           <nav aria-label="Mobile navigation" className="mobile-links">{navigation.map(item => <Collapsible.Root key={item.label}>
             <div className="mobile-nav-row"><Link aria-current={isActive(active, item.href) ? "location" : undefined} href={item.href} onClick={() => setOpen(false)}>{item.label}{!item.children && <ChevronRightIcon aria-hidden="true" />}</Link>

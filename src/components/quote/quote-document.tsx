@@ -39,7 +39,7 @@ export function QuoteDocument({ quote, business, preview = false }: { quote: Quo
 
     <article className="qd-sheet">
       <header className="qd-head">
-        <Image src="/logo/logo.svg" alt={business.businessName} width={2067} height={761} className="qd-logo" unoptimized priority />
+        <Image src="/logo/logo.svg" alt={business.businessName} width={2480} height={761} className="qd-logo" unoptimized priority />
         <div className="qd-head-meta">
           <h1>Quotation</h1>
           <dl><div><dt>Number</dt><dd>{quote.id}</dd></div><div><dt>Date</dt><dd>{longDate(quote.date)}</dd></div>{quote.validUntil && <div><dt>Valid until</dt><dd>{longDate(quote.validUntil)}</dd></div>}</dl>

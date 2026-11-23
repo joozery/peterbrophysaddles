@@ -31,7 +31,7 @@ const roleLabel: Record<AdminRole, string> = { owner: "Owner", admin: "Admin", s
 function SidebarContent({ onNavigate, role }: { onNavigate?: () => void; role?: AdminRole }) {
   const path = usePathname();
   return <>
-    <Link href="/admin" className="admin-brand" onClick={onNavigate}><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2067} height={761} unoptimized /><span>Admin</span></Link>
+    <Link href="/admin" className="admin-brand" onClick={onNavigate}><Image src="/logo/logo-white.svg" alt={DEFAULT_BUSINESS_NAME} width={2480} height={761} unoptimized /><span>Admin</span></Link>
     <p className="admin-nav-caption">WORKSPACE</p>
     <nav aria-label="Admin navigation" className="admin-nav">
       {links.filter(l => !l.roles || (role && l.roles.includes(role))).map(({ href, label, icon: Icon }) => {
