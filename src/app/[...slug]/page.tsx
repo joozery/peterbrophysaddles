@@ -37,7 +37,7 @@ const pages: Record<string, { title: string; description: string; image?: string
   "contact": { title: "Contact Us", description: "Let’s create something special. Prepare an enquiry with details about your horse, riding discipline, custom saddle build, or saddle tree requirements for your workshop." },
   "saddle-pricing": { title: "Saddle Pricing", description: "Enquire about pricing for your chosen saddle, materials and custom details. Published prices are not available yet." },
   "saddle-trees": { title: "Saddle Trees", description: "The foundation of a great saddle. Discuss tree selection and fit options for your horse.", image: "/asset/Saddletrees.png" },
-  "tack": { title: "Tack", description: "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates.", image: "/asset/Tackleatherwork.png" },
+  "tack": { title: "Tack", description: "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates." },
   "leather-work": { title: "Leather work", description: "Carefully crafted leatherwork with attention to materials, strength and the finer details.", image: "/asset/Tackleatherwork.png" },
   "quality-materials": { title: "Quality Materials", description: "Carefully selected leathers and hardware for strength, beauty and long-lasting performance.", image: "/asset/Qualitymaterials.png" },
   "testimonials": { title: "Testimonials", description: "Experience Peter Brophy Saddles and Trees through the words of our riders." },

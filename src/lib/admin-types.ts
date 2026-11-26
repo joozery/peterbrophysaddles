@@ -117,7 +117,7 @@ export const seedPages = (): ContentPage[] => [
   ["custom-saddles", "Custom Saddles", "Built around you and your horse. Discuss fit, style, materials and the finer details of your custom saddle.", ""],
   ["saddle-pricing", "Saddle Pricing", "Enquire about pricing for your chosen saddle, materials and custom details.", ""],
   ["saddle-trees", "Saddle Trees", "The foundation of a great saddle. Discuss tree selection and fit options for your horse.", "/asset/Saddletrees.png"],
-  ["tack", "Tack", "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates.", "/asset/Tackleatherwork.png"],
+  ["tack", "Tack", "Premium tack and leatherwork to complement your saddle, from headstalls to breastplates.", ""],
   ["leather-work", "Leather work", "Carefully crafted leatherwork with attention to materials, strength and the finer details.", "/asset/Tackleatherwork.png"],
   ["quality-materials", "Quality Materials", "Carefully selected leathers and hardware for strength, beauty and long-lasting performance.", "/asset/Qualitymaterials.png"],
   ["testimonials", "Testimonials", "Experience Peter Brophy Saddles and Trees through the words of our riders.", ""],

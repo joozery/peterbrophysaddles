@@ -4,3 +4,4 @@
 .tack-pieces article > p { margin-bottom: 20px; }
 .tack-pieces .text-link { margin-bottom: 8px; }
 @media (max-width: 760px) { .tack-pieces { grid-template-columns: 1fr; gap: 36px; } .tack-piece-photo { aspect-ratio: 16 / 11; } }
+.leather-material-grid.is-textOnly { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
