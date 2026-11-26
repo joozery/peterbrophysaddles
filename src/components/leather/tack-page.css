@@ -1,7 +1,11 @@
 .tack-pieces { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 36px; }
-.tack-piece-photo { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #ded5c5; }
+.tack-piece-photo { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #ece5d6; }
 .tack-pieces article { min-width: 0; }
 .tack-pieces article > p { margin-bottom: 20px; }
 .tack-pieces .text-link { margin-bottom: 8px; }
 @media (max-width: 760px) { .tack-pieces { grid-template-columns: 1fr; gap: 36px; } .tack-piece-photo { aspect-ratio: 16 / 11; } }
 .leather-material-grid.is-textOnly { grid-template-columns: minmax(0, 1fr); max-width: 760px; }
+/* No hero photo above the cards, so pull the cards up close to the page heading. */
+.tack-page .leather-intro + .leather-details { padding-top: 14px; }
+.tack-page .leather-section-heading:not(:has(> div)) > p { max-width: 640px; }
+@media (max-width: 760px) { .tack-page .leather-intro + .leather-details { padding-top: 8px; } }
