@@ -1,10 +1,10 @@
 /* Header shell: compacts and darkens once the page scrolls */
 .site-header { transition: background .25s ease, box-shadow .25s ease; }
 .site-header .header-inner { transition: min-height .25s ease; }
-.site-header .header-logo { transition: height .25s ease; }
+.site-header .header-logo { height: 44px; width: auto; max-width: min(260px, 52vw); object-fit: contain; transition: height .25s ease; }
 .site-header[data-scrolled] { background: #110f0cfa; box-shadow: 0 10px 30px #0006; }
 .site-header[data-scrolled] .header-inner { min-height: 64px; }
-.site-header[data-scrolled] .header-logo { height: 30px; }
+.site-header[data-scrolled] .header-logo { height: 38px; }
 
 /* Desktop navigation */
 .primary-nav { position: relative; flex: 1; display: flex; justify-content: center; }
@@ -53,7 +53,7 @@
 @keyframes nav-panel-in { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes nav-panel-out { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -4px); } }
 
-@media (max-width: 1200px) { .primary-nav-link { padding-inline: 7px; font-size: 11px; } .header-enquire { padding-inline: 14px; } }
-@media (max-width: 1100px) { .primary-nav { display: none; } .mobile-menu { display: block; } .header-actions { margin-left: auto; } }
-@media (max-width: 640px) { .header-enquire { display: none; } .header-actions { gap: 8px; } .site-header[data-scrolled] .header-inner { min-height: 60px; } .site-header[data-scrolled] .header-logo { height: 28px; } }
+@media (max-width: 1200px) { .site-header .header-logo { height: 40px; } .site-header[data-scrolled] .header-logo { height: 36px; } .primary-nav-link { padding-inline: 7px; font-size: 11px; } .header-enquire { padding-inline: 14px; } }
+@media (max-width: 1100px) { .site-header .header-logo { height: 48px; } .site-header[data-scrolled] .header-logo { height: 42px; } .primary-nav { display: none; } .mobile-menu { display: block; } .header-actions { margin-left: auto; } }
+@media (max-width: 640px) { .site-header .header-inner { min-height: 80px; } .site-header .header-logo { height: 56px; } .header-enquire { display: none; } .header-actions { gap: 8px; } .site-header[data-scrolled] .header-inner { min-height: 72px; } .site-header[data-scrolled] .header-logo { height: 50px; } }
 @media (prefers-reduced-motion: reduce) { .primary-nav-panel[data-state] { animation: none; } }

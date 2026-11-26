@@ -1,7 +1,7 @@
 .mobile-navigation-overlay { position:fixed; inset:0; z-index:40; background:#0009; backdrop-filter:blur(3px); }
 .mobile-panel.mobile-navigation-panel { width:min(92vw,400px); height:100dvh; padding:26px 24px; background:#171510; display:flex; flex-direction:column; border-left:1px solid #b89a6138; }
 .mobile-navigation-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; }
-.mobile-navigation-logo { width:auto; height:43px; }
+.mobile-navigation-logo { width:auto; height:56px; }
 .mobile-navigation-close { display:grid; place-items:center; width:38px; height:38px; border:1px solid #b89a6138; color:#ddd1ba; }
 .mobile-navigation-caption { font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:#a99978; margin-top:22px; padding-bottom:22px; border-bottom:1px solid #b89a6130; }
 .mobile-navigation-panel .mobile-links { margin-top:10px; }
