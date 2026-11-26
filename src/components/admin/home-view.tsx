@@ -125,7 +125,7 @@ export function HomeView() {
               <p className="admin-home-card-num">Service {i + 1}</p>
               <ImageUpload label="Photo" folder="pages" value={item.image} onChange={v => update({ image: v })} onBusyChange={busy} />
               <Text label="Title" value={item.title} onChange={v => update({ title: v })} />
-              <Text label="Text" rows={3} value={item.body} onChange={v => update({ body: v })} />
+              <Text label="Text" rows={5} value={item.body} onChange={v => update({ body: v })} />
               <LinkFields label="Link" value={item.link} onChange={v => update({ link: v })} />
             </div>;
           })}

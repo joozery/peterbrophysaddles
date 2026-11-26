@@ -6,7 +6,7 @@ export function validatePageContent(slug: string, content: unknown): string | nu
   const defaults = pageContentDefaults[slug];
   for (const [key, value] of Object.entries(content)) {
     if (!defaults || !(key in defaults) || typeof value !== "string" || value.length > 5000) return "Invalid page field.";
-    if (/^(image|src)_/.test(key) && !/^(\/(?!\/)|https:\/\/)/.test(value)) return "Section images need an uploaded image, /path or https:// URL.";
+    if (/^(image|src)_/.test(key) && value !== "" && !/^(\/(?!\/)|https:\/\/)/.test(value)) return "Section images need an uploaded image, /path or https:// URL.";
     if (key.startsWith("href") && (!/^(\/(?!\/)|#[\w-]+$|https:\/\/|mailto:|tel:)/.test(value) || /[\u0000-\u0020\\]/.test(value))) return "Links must use /page, #section, https://, mailto: or tel:.";
   }
   return null;
