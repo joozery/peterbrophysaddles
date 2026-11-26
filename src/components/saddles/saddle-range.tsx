@@ -33,7 +33,7 @@ export function SaddleRange({ products }: { products: Product[] }) {
       return <section key={t.name} id={slug(t.name)} className="range-type" aria-labelledby={`${slug(t.name)}-title`}>
         <div className="section-shell range-type-grid">
           <Link href={`/saddle-range/${lead.id}`} className="range-photo" tabIndex={-1} aria-hidden="true">
-            <Image src={photo} alt="" fill sizes="(max-width: 860px) 100vw, 50vw" className="object-contain" unoptimized={isRemote(photo)} />
+            <Image src={photo} alt={`${lead.name} — ${t.plural.toLowerCase()} by Peter Brophy Saddles and Trees`} fill sizes="(max-width: 860px) 100vw, 50vw" className="object-contain" unoptimized={isRemote(photo)} />
             <span className="range-photo-index">{String(i + 1).padStart(2, "0")}</span>
           </Link>
           <div className="range-info">
@@ -48,7 +48,7 @@ export function SaddleRange({ products }: { products: Product[] }) {
             {t.variants.length > 1 && <div className="range-variants">
               <p className="range-variants-title">Choose a style</p>
               <ul>{t.variants.map(v => { const src = productPhoto(v); return <li key={v.id}><Link href={`/saddle-range/${v.id}`} className="range-variant">
-                <span className="range-variant-thumb"><Image src={src} alt="" fill sizes="72px" className="object-cover" unoptimized={isRemote(src)} /></span>
+                <span className="range-variant-thumb"><Image src={src} alt={v.name} fill sizes="72px" className="object-cover" unoptimized={isRemote(src)} /></span>
                 <span><strong>{v.name}</strong><small>{v.description ? summary(v.description) : "View details"}</small></span>
                 <ChevronRightIcon aria-hidden="true" />
               </Link></li>; })}</ul>
@@ -66,7 +66,7 @@ export function SaddleRange({ products }: { products: Product[] }) {
       <div className="section-shell">
         <div className="range-trees-head"><div><p className="eyebrow">The foundation</p><h2>Saddle Trees</h2></div><p className="body-copy">Rigid PU and carbon fibre trees — light, strong and shaped for your horse’s freedom of movement.</p></div>
         <div className="range-trees-grid">{trees.map(p => { const src = productPhoto(p), cantle = specValue(p, /cantle/i), w = specValue(p, /weight/i); return <Link key={p.id} href={`/saddle-range/${p.id}`} className="range-tree">
-          <span className="range-tree-photo"><Image src={src} alt="" fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" unoptimized={isRemote(src)} /></span>
+          <span className="range-tree-photo"><Image src={src} alt={`${p.name} saddle tree`} fill sizes="(max-width: 640px) 100vw, 40vw" className="object-cover" unoptimized={isRemote(src)} /></span>
           <span className="range-tree-body"><strong>{p.name}</strong><small>{[cantle && `Cantle ${cantle}`, w].filter(Boolean).join(" · ")}</small></span>
           <ChevronRightIcon aria-hidden="true" />
         </Link>; })}</div>
