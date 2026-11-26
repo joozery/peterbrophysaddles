@@ -20,7 +20,7 @@
 .about-storyCopy h2, .about-materials h2 { text-wrap: balance; margin: 18px 0 23px; font-size: clamp(26px, 2.6vw, 36px); }
 .about-storyCopy > p:not(:first-child), .about-materials > div > p:not(:first-child) { margin-bottom: 17px; color: #766b59; font-size: 13px; line-height: 1.95; }
 .about-storyCopy > .eyebrow { text-wrap: balance; }
-.about-storyCopy > p.about-lead { color: #3c352a; font-size: 15px; line-height: 1.85; text-wrap: pretty; }
+.about-storyCopy > p.about-lead { color: #766b59; font-size: 15px; line-height: 1.85; text-wrap: pretty; }
 .about-storyCopy > a, .about-materials > div > a { margin-top: 9px; }
 .about-principles { background: #eae4d7; padding-block: 60px; }
 .about-sectionHeading { display: flex; justify-content: space-between; align-items: end; gap: 35px; margin-bottom: 36px; }

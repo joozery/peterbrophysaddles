@@ -118,6 +118,7 @@ html { scroll-padding-top: 92px; }
 .custom-banner { background-color: #12110e; background-size: cover; background-position: center; color: #f0ece2; }
 .custom-banner-inner { display: flex; justify-content: flex-end; min-height: 380px; align-items: center; padding-block: 52px; }
 .custom-banner-copy { width: 46%; }
+.custom-banner .custom-banner-text { color: #f7f3ea; font-size: 15px; line-height: 1.7; font-weight: 450; text-shadow: 0 1px 10px #000000b3; }
 @media (max-width: 767px) { .custom-banner { background-position: 30% center; } .custom-banner-inner { padding-block: 48px; } .custom-banner-copy { width: 100%; background: #12110ec9; padding: 24px; } }
 
 /* Subtle motion for controls and Radix surfaces. */
