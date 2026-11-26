@@ -164,9 +164,9 @@ export const defaultHome: HomeContent = {
   },
   services: {
     items: [
-      { title: "Saddle trees", body: "Designed with precision and built for endurance, we craft high-quality custom saddle trees that provide the perfect fit and foundation for both horse and rider, trusted by saddlers nationwide.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/7f75ac3f-b869-49bd-a161-d375f3529fe1.jpg", link: { label: "Learn more", href: "/saddle-trees" } },
-      { title: "Bridles & leatherwork", body: "Custom leatherwork made to complement your rig, using hand-selected bridle and harness leathers. Crafted for durability, style, and daily performance in the arena or on the trail.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/0d4c8732-8ff9-4aba-b820-73054828f31f.jpg", link: { label: "Explore tack", href: "/tack" } },
-      { title: "Hardware", body: "Featuring high-quality buckles, conchos, and robust fittings chosen for strength and timeless style. Our dedicated hardware range is coming soon.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/330c7fc0-c088-4692-bedf-6e0496b4fe8c.jpg", link: { label: "Our approach", href: "/quality-materials" } },
+      { title: "Saddle trees", body: "Designed with precision and built for endurance, we craft high-quality custom saddle trees that provide the perfect fit and foundation for both horse and rider, trusted by saddlers nationwide.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/7f75ac3f-b869-49bd-a161-d375f3529fe1.jpg", link: { label: "Explore saddle trees", href: "/saddle-trees" } },
+      { title: "Bridles & leatherwork", body: "Custom leatherwork made to complement your rig, using hand-selected bridle and harness leathers. Crafted for durability, style, and daily performance in the arena or on the trail.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/0d4c8732-8ff9-4aba-b820-73054828f31f.jpg", link: { label: "Explore bridles", href: "/tack" } },
+      { title: "Hardware", body: "Featuring high-quality buckles, conchos, and robust fittings chosen for strength and timeless style. Our dedicated hardware range is coming soon.", image: "https://pub-3222dde6d8164a918f3c3681e58bb989.r2.dev/products/2026/11/330c7fc0-c088-4692-bedf-6e0496b4fe8c.jpg", link: { label: "Explore hardware", href: "/quality-materials" } },
     ],
   },
   testimonial: {
