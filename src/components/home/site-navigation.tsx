@@ -15,7 +15,7 @@ export const mainNavigation: NavigationItem[] = [
     { label: "Cutting Saddles", href: "/saddle-range/cutting-saddles", image: "/images/cutting.webp" },
     { label: "Custom Western Saddles", href: "/saddle-range/custom-western-saddles", image: "/images/western.webp" },
   ] },
-  { label: "Tack", href: "/tack", children: [{ label: "Leather work", href: "/leather-work" }] },
+  { label: "Bridles & Leatherwork", href: "/tack" },
   { label: "Saddle Trees", href: "/saddle-trees", children: [
     { label: "Stock Standard Tree (3 ½” Cantle)", href: "/saddle-range/stock-standard-saddle-tree-3-5-cantle", image: "/asset/Saddletrees.png" },
     { label: "Stock Tree (3 ¼” Cantle)", href: "/saddle-range/stock-saddle-tree-3-25-cantle", image: "/asset/Saddletrees.png" },

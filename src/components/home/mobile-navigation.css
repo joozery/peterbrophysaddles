@@ -10,7 +10,7 @@
 .mobile-navigation-panel .mobile-nav-row > a > svg { width:13px; height:13px; color:#9b8761; margin-right:15px; }
 .mobile-navigation-panel .mobile-submenu-toggle { padding:16px; min-width:44px; min-height:44px; }
 .mobile-navigation-panel .navbar-mobile-submenu.navbar-mobile-submenu { margin:0 0 12px 0; padding:2px 0 2px 12px; }
-.mobile-navigation-panel .navbar-mobile-submenu a { font-size:12px; padding:12px; color:#bfb5a3; }
+.mobile-navigation-panel .navbar-mobile-submenu a { font-size:15px; line-height:1.35; padding:14px 12px; min-height:48px; display:flex; align-items:center; color:#d6ccb8; }
 .mobile-navigation-panel .mobile-nav-row > a[aria-current] { color:#e8cf97; }
 .mobile-navigation-footer { margin-top:auto; padding-top:32px; }
 .mobile-navigation-footer p { font-family:Georgia,serif; font-size:17px; font-style:italic; color:#bfb5a3; }
