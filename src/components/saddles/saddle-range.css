@@ -8,10 +8,10 @@
 .range-type + .range-type { border-top: 1px solid #ddd3c2; }
 .range-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
 .range-type:nth-child(even) .range-photo { order: 2; }
-.range-photo { position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; background: #251d13; }
+.range-photo { position: relative; display: block; aspect-ratio: 4/5; overflow: hidden; background: #ece5d6; }
 .range-photo img { transition: transform 600ms ease; }
 .range-photo:hover img { transform: scale(1.03); }
-.range-photo-index { position: absolute; left: 20px; bottom: 16px; font-family: Georgia, serif; font-size: 44px; line-height: 1; color: #f0ece2; text-shadow: 0 2px 16px #0008; }
+.range-photo-index { position: absolute; left: 20px; bottom: 16px; font-family: Georgia, serif; font-size: 44px; line-height: 1; color: #8c7045; text-shadow: none; }
 .range-info h2 { margin-top: 14px; }
 .range-description { margin-top: 18px; max-width: 560px; }
 .range-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 24px; border-top: 1px solid #d7ccba; }

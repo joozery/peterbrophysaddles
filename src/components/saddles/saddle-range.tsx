@@ -33,7 +33,7 @@ export function SaddleRange({ products }: { products: Product[] }) {
       return <section key={t.name} id={slug(t.name)} className="range-type" aria-labelledby={`${slug(t.name)}-title`}>
         <div className="section-shell range-type-grid">
           <Link href={`/saddle-range/${lead.id}`} className="range-photo" tabIndex={-1} aria-hidden="true">
-            <Image src={photo} alt="" fill sizes="(max-width: 860px) 100vw, 50vw" className="object-cover" unoptimized={isRemote(photo)} />
+            <Image src={photo} alt="" fill sizes="(max-width: 860px) 100vw, 50vw" className="object-contain" unoptimized={isRemote(photo)} />
             <span className="range-photo-index">{String(i + 1).padStart(2, "0")}</span>
           </Link>
           <div className="range-info">
