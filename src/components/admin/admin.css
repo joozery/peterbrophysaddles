@@ -479,7 +479,6 @@ button.admin-user:hover, button.admin-user[data-state="open"] { background: #ebe
 .admin-home-cards.is-three .admin-home-card { min-width: 0; }
 .admin-home-cards.is-three .admin-home-card textarea { min-height: 132px; resize: vertical; }
 .admin-home-cards.is-three .admin-upload-preview { height: 150px; }
-@media (max-width: 1100px) { .admin-home-cards.is-three { grid-template-columns: 1fr; } }
 .admin-home-card { display: grid; gap: 12px; align-content: start; padding: 14px; border: 1px solid var(--a-line); border-radius: 8px; background: #faf7f0; }
 .admin-home-card .admin-upload { flex-direction: column; }
 .admin-home-card .admin-upload-preview { width: 100%; height: 120px; }
@@ -488,7 +487,12 @@ button.admin-user:hover, button.admin-user[data-state="open"] { background: #ebe
 .admin-form-row.is-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .admin-home-foot { padding-top: 4px; }
 .admin-notice.is-sticky { position: sticky; top: 84px; z-index: 5; box-shadow: 0 6px 18px #0000000f; }
-@media (max-width: 1000px) { .admin-home-grid, .admin-form-row.is-three { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .admin-home-cards.is-three { grid-template-columns: 1fr; } } /* About editor; the Home editor refines this below */
+/* The admin sidebar takes 236px, so layouts follow the width of the editor itself, not the browser window. */
+.admin-home-box { container-type: inline-size; container-name: admin-home; }
+@container admin-home (max-width: 900px) { .admin-home-grid, .admin-home .admin-form-row.is-three { grid-template-columns: 1fr; } .admin-home-cards.is-three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container admin-home (max-width: 620px) { .admin-home-cards.is-three { grid-template-columns: 1fr; } .admin-home .admin-form-row { grid-template-columns: 1fr; } }
+@container admin-home (max-width: 460px) { .admin-home .admin-upload { flex-direction: column; } .admin-home .admin-upload-preview { width: 100%; height: 140px; } }
 
 /* About page editor */
 .admin-card-head.is-tight { margin-bottom: 0; }

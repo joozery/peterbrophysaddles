@@ -58,7 +58,7 @@ export function HomeView() {
     {!canEdit && <p className="admin-notice">Only owners and admins can edit the home page.</p>}
     {draft && <p className="admin-notice is-sticky">You have unsaved changes. Press <strong>Save & publish</strong> to put them live.</p>}
 
-    <fieldset className="admin-fieldset admin-home" disabled={!canEdit}>
+    <div className="admin-home-box"><fieldset className="admin-fieldset admin-home" disabled={!canEdit}>
       <Card title="1 · Hero (top of page)">
         <div className="admin-home-grid">
           <div className="admin-form">
@@ -155,7 +155,7 @@ export function HomeView() {
         <button type="button" className="admin-button" onClick={() => setDraft({ ...defaultHome })}>Restore original content</button>
         <button type="button" className="admin-button is-primary" disabled={!draft || uploads > 0} onClick={save}>{uploads > 0 ? "Uploading…" : "Save & publish"}</button>
       </div>}
-    </fieldset>
+    </fieldset></div>
     {toast}
   </>;
 }

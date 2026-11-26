@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
     applicationName: brand,
     keywords: ["custom saddles Australia", "western saddles", "saddle trees", "stock saddle", "campdraft saddle", "wade saddle", "cowboy dressage saddle", "handmade saddles Brisbane", "bridles and leatherwork", brand],
     alternates: { canonical: "/" },
-    openGraph: { type: "website", locale: "en_AU", url: "/", siteName: brand, title, description, images: [{ url: "/cover/hero.png", alt: `${brand} custom saddle` }] },
-    twitter: { card: "summary_large_image", title, description, images: ["/cover/hero.png"] },
+    openGraph: { type: "website", locale: "en_AU", url: "/", siteName: brand, title, description, images: [{ url: "/cover/share.jpg", width: 960, height: 578, alt: `${brand} – riders and horses in the Australian outback` }] },
+    twitter: { card: "summary_large_image", title, description, images: ["/cover/share.jpg"] },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   };
 }

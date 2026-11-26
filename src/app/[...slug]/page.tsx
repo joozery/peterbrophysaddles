@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const brand = await getBrandName();
   const title = `${page.title} | ${brand}`;
   const url = `/${slug.join("/")}`;
-  return { title, description: page.description, alternates: { canonical: url }, openGraph: { type: "website", locale: "en_AU", url, siteName: brand, title, description: page.description, ...(page.image ? { images: [{ url: page.image, alt: page.title }] } : {}) }, twitter: { card: "summary_large_image", title, description: page.description, ...(page.image ? { images: [page.image] } : {}) } };
+  return { title, description: page.description, alternates: { canonical: url }, openGraph: { type: "website", locale: "en_AU", url, siteName: brand, title, description: page.description, images: [{ url: page.image || "/cover/share.jpg", alt: page.title }] }, twitter: { card: "summary_large_image", title, description: page.description, images: [page.image || "/cover/share.jpg"] } };
 }
 function PagePlaceholder() {
   return <div className="section-shell py-16" role="status" aria-label="Loading page"><div className="h-3 w-40 rounded bg-stone-300/50" /><div className="mt-6 h-12 w-3/4 rounded bg-stone-300/50" /><div className="mt-6 h-4 max-w-xl rounded bg-stone-300/50" /><div className="mt-3 h-4 max-w-md rounded bg-stone-300/50" /><span className="sr-only">Loading page…</span></div>;
