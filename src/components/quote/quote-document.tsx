@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { CheckCircledIcon, DownloadIcon } from "@radix-ui/react-icons";
-import { type Quote, type Settings, quoteTotal } from "@/lib/admin-types";
+import { DEFAULT_LOGO_DARK, type Quote, type Settings, quoteTotal, safeLogo } from "@/lib/admin-types";
 import { money } from "@/lib/catalog";
 import "./quote-document.css";
 
@@ -39,7 +39,7 @@ export function QuoteDocument({ quote, business, preview = false }: { quote: Quo
 
     <article className="qd-sheet">
       <header className="qd-head">
-        <Image src="/logo/logo.svg" alt={business.businessName} width={2480} height={761} className="qd-logo" unoptimized priority />
+        <Image src={safeLogo(business.logoDark, DEFAULT_LOGO_DARK)} alt={business.businessName} width={2480} height={761} className="qd-logo" unoptimized priority />
         <div className="qd-head-meta">
           <h1>Quotation</h1>
           <dl><div><dt>Number</dt><dd>{quote.id}</dd></div><div><dt>Date</dt><dd>{longDate(quote.date)}</dd></div>{quote.validUntil && <div><dt>Valid until</dt><dd>{longDate(quote.validUntil)}</dd></div>}</dl>

@@ -5,6 +5,7 @@ import { Switch } from "radix-ui";
 import { type Settings, api, updateAdmin, useAdmin, useAdminStatus } from "@/lib/admin-store";
 import { SOCIAL_LINKS } from "@/lib/admin-types";
 import { Card, Field, PageHeader, useToast } from "./admin-ui";
+import { ImageUpload } from "./image-upload";
 
 const toggles: { key: "notifyOrders" | "notifyEnquiries" | "showPrices"; label: string }[] = [
   { key: "notifyOrders", label: "Email me when a new order is placed" },
@@ -74,6 +75,13 @@ export function SettingsView() {
         <Card title="Notifications & display">
           <ul className="admin-toggles">{toggles.map(t => <li key={t.key}><label htmlFor={t.key}>{t.label}</label><Switch.Root id={t.key} className="admin-switch" checked={s[t.key]} disabled={!canEdit} onCheckedChange={v => set(t.key, v)}><Switch.Thumb className="admin-switch-thumb" /></Switch.Root></li>)}</ul>
           <p className="admin-hint">Email notifications start working once email sending is connected.</p>
+        </Card>
+        <Card title="Logo">
+          <fieldset className="admin-form admin-fieldset" disabled={!canEdit}>
+            <ImageUpload label="Header & menu logo (for the dark header)" folder="misc" value={s.logoLight ?? ""} onChange={v => set("logoLight", v)} />
+            <ImageUpload label="Quote & document logo (for white pages)" folder="misc" value={s.logoDark ?? ""} onChange={v => set("logoDark", v)} />
+          </fieldset>
+          <p className="admin-hint">Use a PNG with a transparent background, about 1200 px wide. The header logo should be light-coloured so it shows on the dark header; the document logo should be dark. Leave empty (or remove the image) to use the built-in logo. Save settings to apply.</p>
         </Card>
         <Card title="Social media">
           <fieldset className="admin-form admin-fieldset" disabled={!canEdit}>

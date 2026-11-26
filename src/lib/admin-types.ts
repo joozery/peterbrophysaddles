@@ -9,7 +9,9 @@ export type Promotion = { enabled: boolean; eyebrow: string; highlight: string; 
 export type ContentPage = { slug: string; title: string; description: string; image: string; published: boolean; updatedAt: string; content?: Record<string, string> };
 export type Settings = { businessName: string; email: string; phone: string; address: string; /** Shown in payment emails, e.g. account name, BSB, account number. */ bankDetails: string; notifyOrders: boolean; notifyEnquiries: boolean; showPrices: boolean;
   /** Social media links shown in the site footer (blank = hidden). */
-  facebookUrl: string; instagramUrl: string; youtubeUrl: string; tiktokUrl: string };
+  facebookUrl: string; instagramUrl: string; youtubeUrl: string; tiktokUrl: string;
+  /** Logo for the dark header and menu (blank = built-in logo). */ logoLight?: string;
+  /** Logo for white documents such as quotes (blank = built-in logo). */ logoDark?: string };
 export type AdminRole = "owner" | "admin" | "staff";
 export type AdminUser = { id: string; name: string; email: string; role: AdminRole; active: boolean; invitedAt: string; lastActive: string };
 export type OrderWithNote = AdminOrder & { note?: string };
@@ -94,7 +96,12 @@ export const defaultPromotion: Promotion = {
 /** Brand name shown across the site; editable in Admin → Settings → Business name. */
 export const DEFAULT_BUSINESS_NAME = "Peter Brophy Saddles and Trees";
 export const defaultSettings: Settings = { businessName: DEFAULT_BUSINESS_NAME, email: "", phone: "", address: "", bankDetails: "", notifyOrders: true, notifyEnquiries: true, showPrices: true,
-  facebookUrl: "https://www.facebook.com/share/1517WoSYLTS/?mibextid=wwXIfr", instagramUrl: "", youtubeUrl: "", tiktokUrl: "" };
+  facebookUrl: "https://www.facebook.com/share/1517WoSYLTS/?mibextid=wwXIfr", instagramUrl: "", youtubeUrl: "", tiktokUrl: "", logoLight: "", logoDark: "" };
+
+/** Uploaded logo URL if it is safe to render (a /path or https:// URL), otherwise the built-in fallback. */
+export const safeLogo = (url: string | undefined, fallback: string) => { const v = (url ?? "").trim(); return /^(\/(?!\/)|https:\/\/)/.test(v) ? v : fallback; };
+export const DEFAULT_LOGO_LIGHT = "/logo/logo-white.svg";
+export const DEFAULT_LOGO_DARK = "/logo/logo.svg";
 
 /** Social networks editable in Admin → Settings; `host` is what a valid link must point at. */
 export const SOCIAL_LINKS = [
